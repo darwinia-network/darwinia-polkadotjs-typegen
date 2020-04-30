@@ -7,24 +7,23 @@ import { Bytes, Data, bool, u32, u64 } from '@polkadot/types/primitive';
 import { UncleEntryItem } from '@polkadot/types/interfaces/authorship';
 import { BabeAuthorityWeight, MaybeVrf, Randomness } from '@polkadot/types/interfaces/babe';
 import { BalanceLock } from '@polkadot/types/interfaces/balances';
-import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { ProposalIndex, Votes } from '@polkadot/types/interfaces/collective';
 import { AuthorityId, RawVRFOutput } from '@polkadot/types/interfaces/consensus';
 import { Proposal } from '@polkadot/types/interfaces/democracy';
 import { SetId, StoredPendingChange, StoredState } from '@polkadot/types/interfaces/grandpa';
 import { RegistrarInfo, Registration } from '@polkadot/types/interfaces/identity';
 import { AuthIndex } from '@polkadot/types/interfaces/imOnline';
-import { Kind, OffenceDetails, OpaqueTimeSlot, ReportIdOf } from '@polkadot/types/interfaces/offences';
+import { DeferredOffenceOf, Kind, OffenceDetails, OpaqueTimeSlot, ReportIdOf } from '@polkadot/types/interfaces/offences';
 import { ActiveRecovery, RecoveryConfig } from '@polkadot/types/interfaces/recovery';
 import { AccountId, AccountIndex, Balance, BalanceOf, BlockNumber, H256, Hash, KeyTypeId, Moment, Perbill, ValidatorId, Weight } from '@polkadot/types/interfaces/runtime';
 import { Keys, SessionIndex } from '@polkadot/types/interfaces/session';
 import { Bid, BidKind, SocietyVote, StrikeCount, VouchingStatus } from '@polkadot/types/interfaces/society';
-import { ActiveEraInfo, EraIndex, EraRewardPoints, Forcing, Nominations, RewardDestination, SlashingSpans, SpanIndex, SpanRecord, UnappliedSlash, ValidatorPrefs } from '@polkadot/types/interfaces/staking';
+import { ActiveEraInfo, ElectionStatus, EraIndex, EraRewardPoints, Forcing, Nominations, PhragmenScore, RewardDestination, SlashingSpans, SpanIndex, SpanRecord, UnappliedSlash, ValidatorPrefs } from '@polkadot/types/interfaces/staking';
 import { AccountInfo, DigestOf, EventIndex, EventRecord, LastRuntimeUpgradeInfo, Phase } from '@polkadot/types/interfaces/system';
 import { OpenTip, TreasuryProposal } from '@polkadot/types/interfaces/treasury';
 import { Multiplier } from '@polkadot/types/interfaces/txpayment';
 import { Multisig } from '@polkadot/types/interfaces/utility';
-import { BalanceInfo, EthAddress, EthHeader, EthHeaderBrief, EthReceiptProof, EthTransactionIndex, ExposureT, H128, KtonBalance, Power, RKT, RingBalance, StakingLedgerT, TronAddress, TsInMs } from 'darwinia-polkadotjs-typegen/interfaces/darwiniaInject';
+import { AddressT, BalanceInfo, ElectionResultT, EthAddress, EthHeader, EthReceiptProof, EthTransactionIndex, ExposureT, H128, KtonBalance, Power, RKT, RingBalance, StakingLedgerT, TsInMs } from 'darwinia-polkadotjs-typegen/interfaces/darwiniaInject';
 import { ApiTypes } from '@polkadot/api/types';
 
 declare module '@polkadot/api/types/storage' {
@@ -68,6 +67,13 @@ declare module '@polkadot/api/types/storage' {
        * if per-block initialization has already been called for current block.
        **/
       initialized: AugmentedQuery<ApiType, () => Observable<Option<MaybeVrf>>>;
+      /**
+       * How late the current block is compared to its parent.
+       * This entry is populated as part of block execution and is cleaned up
+       * on block finalization. Querying this storage entry outside of block
+       * execution context should always yield zero.
+       **/
+      lateness: AugmentedQuery<ApiType, () => Observable<BlockNumber>>;
       /**
        * Next epoch randomness.
        **/
@@ -116,8 +122,8 @@ declare module '@polkadot/api/types/storage' {
     };
     claims: {
 
-      claimsFromEth: AugmentedQuery<ApiType, (arg: EthereumAddress | string | Uint8Array) => Observable<Option<RingBalance>>>;
-      claimsFromTron: AugmentedQuery<ApiType, (arg: TronAddress | string | Uint8Array) => Observable<Option<RingBalance>>>;
+      claimsFromEth: AugmentedQuery<ApiType, (arg: AddressT | string | Uint8Array) => Observable<Option<RingBalance>>>;
+      claimsFromTron: AugmentedQuery<ApiType, (arg: AddressT | string | Uint8Array) => Observable<Option<RingBalance>>>;
       total: AugmentedQuery<ApiType, () => Observable<RingBalance>>;
     };
     council: {
@@ -198,13 +204,16 @@ declare module '@polkadot/api/types/storage' {
        * Anchor block that works as genesis block
        **/
       genesisHeader: AugmentedQuery<ApiType, () => Observable<Option<EthHeader>>>;
-      headerBriefs: AugmentedQuery<ApiType, (arg: H256 | string | Uint8Array) => Observable<Option<EthHeaderBrief>>>;
+      // headerBriefs: AugmentedQuery<ApiType, (arg: H256 | string | Uint8Array) => Observable<Option>>;
       headers: AugmentedQuery<ApiType, (arg: H256 | string | Uint8Array) => Observable<Option<EthHeader>>>;
       /**
        * Number of blocks finality
        **/
       numberOfBlocksFinality: AugmentedQuery<ApiType, () => Observable<u64>>;
       numberOfBlocksSafe: AugmentedQuery<ApiType, () => Observable<u64>>;
+      receiptVerifyFee: AugmentedQuery<ApiType, () => Observable<Balance>>;
+      relayerPoints: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<u64>>;
+      totalRelayerPoints: AugmentedQuery<ApiType, () => Observable<u64>>;
     };
     finalityTracker: {
 
@@ -350,6 +359,11 @@ declare module '@polkadot/api/types/storage' {
        * A vector of reports of the same kind that happened at the same time slot.
        **/
       concurrentReportsIndex: AugmentedQueryDoubleMap<ApiType, (key1: Kind | string | Uint8Array, key2: OpaqueTimeSlot | string | Uint8Array) => Observable<Vec<ReportIdOf>>>;
+      /**
+       * Deferred reports that have been rejected by the offence handler and need to be submitted
+       * at a later time.
+       **/
+      deferredOffences: AugmentedQuery<ApiType, () => Observable<Vec<DeferredOffenceOf>>>;
       /**
        * The primary structure that holds all offence records keyed by report identifiers.
        **/
@@ -516,7 +530,7 @@ declare module '@polkadot/api/types/storage' {
       canceledSlashPayout: AugmentedQuery<ApiType, () => Observable<Power>>;
       /**
        * The current era index.
-       * This is the latest planned era, depending on how session module queues the validator
+       * This is the latest planned era, depending on how the Session pallet queues the validator
        * set, it might be active or not.
        **/
       currentEra: AugmentedQuery<ApiType, () => Observable<Option<EraIndex>>>;
@@ -524,6 +538,11 @@ declare module '@polkadot/api/types/storage' {
        * The earliest era for which we have a pending, unapplied slash.
        **/
       earliestUnappliedSlash: AugmentedQuery<ApiType, () => Observable<Option<EraIndex>>>;
+      /**
+       * Flag to control the execution of the offchain election. When `Open(_)`, we accept
+       * solutions to be submitted.
+       **/
+      eraElectionStatus: AugmentedQuery<ApiType, () => Observable<ElectionStatus>>;
       /**
        * Rewards for the last `HISTORY_DEPTH` eras.
        * If reward hasn't been set or has been removed then 0 reward is returned.
@@ -538,7 +557,7 @@ declare module '@polkadot/api/types/storage' {
       erasStakers: AugmentedQueryDoubleMap<ApiType, (key1: EraIndex | AnyNumber | Uint8Array, key2: AccountId | string | Uint8Array) => Observable<ExposureT>>;
       /**
        * Clipped Exposure of validator at era.
-       * This is similar to [`ErasStakers`] but number of nominators exposed is reduce to the
+       * This is similar to [`ErasStakers`] but number of nominators exposed is reduced to the
        * `T::MaxNominatorRewardedPerValidator` biggest stakers.
        * This is used to limit the i/o cost for the nominator payout.
        * This is keyed fist by the era index to allow bulk deletion and then the stash account.
@@ -547,7 +566,7 @@ declare module '@polkadot/api/types/storage' {
        **/
       erasStakersClipped: AugmentedQueryDoubleMap<ApiType, (key1: EraIndex | AnyNumber | Uint8Array, key2: AccountId | string | Uint8Array) => Observable<ExposureT>>;
       /**
-       * The session index at which the era start for the last `HISTORY_DEPTH` eras
+       * The session index at which the era start for the last `HISTORY_DEPTH` eras.
        **/
       erasStartSessionIndex: AugmentedQuery<ApiType, (arg: EraIndex | AnyNumber | Uint8Array) => Observable<Option<SessionIndex>>>;
       /**
@@ -556,7 +575,7 @@ declare module '@polkadot/api/types/storage' {
        **/
       erasTotalStake: AugmentedQuery<ApiType, (arg: EraIndex | AnyNumber | Uint8Array) => Observable<Power>>;
       /**
-       * Similarly to `ErasStakers` this holds the preferences of validators.
+       * Similar to `ErasStakers`, this holds the preferences of validators.
        * This is keyed fist by the era index to allow bulk deletion and then the stash account.
        * Is it removed after `HISTORY_DEPTH` eras.
        **/
@@ -567,15 +586,15 @@ declare module '@polkadot/api/types/storage' {
        **/
       erasValidatorReward: AugmentedQuery<ApiType, (arg: EraIndex | AnyNumber | Uint8Array) => Observable<Option<RingBalance>>>;
       /**
-       * True if the next session change will be a new era regardless of index.
+       * Mode of era forcing.
        **/
       forceEra: AugmentedQuery<ApiType, () => Observable<Forcing>>;
       /**
-       * Number of era to keep in history.
-       * Information is kept for eras in `[current_era - history_depth; current_era]
-       * Must be more than the number of era delayed by session otherwise.
-       * i.e. active era must always be in history.
-       * i.e. `active_era > current_era - history_depth` must be guaranteed.
+       * Number of eras to keep in history.
+       * Information is kept for eras in `[current_era - history_depth; current_era]`.
+       * Must be more than the number of eras delayed by session otherwise.
+       * I.e. active era must always be in history.
+       * I.e. `active_era > current_era - history_depth` must be guaranteed.
        **/
       historyDepth: AugmentedQuery<ApiType, () => Observable<u32>>;
       /**
@@ -584,6 +603,11 @@ declare module '@polkadot/api/types/storage' {
        * invulnerables) and restricted to testnets.
        **/
       invulnerables: AugmentedQuery<ApiType, () => Observable<Vec<AccountId>>>;
+      /**
+       * True if the current **planned** session is final. Note that this does not take era
+       * forcing into account.
+       **/
+      isCurrentSessionFinal: AugmentedQuery<ApiType, () => Observable<bool>>;
       /**
        * Total *Kton* in pool.
        **/
@@ -615,6 +639,16 @@ declare module '@polkadot/api/types/storage' {
        **/
       payoutFraction: AugmentedQuery<ApiType, () => Observable<Perbill>>;
       /**
+       * The next validator set. At the end of an era, if this is available (potentially from the
+       * result of an offchain worker), it is immediately used. Otherwise, the on-chain election
+       * is executed.
+       **/
+      queuedElected: AugmentedQuery<ApiType, () => Observable<Option<ElectionResultT>>>;
+      /**
+       * The score of the current [`QueuedElected`].
+       **/
+      queuedScore: AugmentedQuery<ApiType, () => Observable<Option<PhragmenScore>>>;
+      /**
        * Total *Ring* in pool.
        **/
       ringPool: AugmentedQuery<ApiType, () => Observable<RingBalance>>;
@@ -627,6 +661,16 @@ declare module '@polkadot/api/types/storage' {
        * The rest of the slashed value is handled by the `Slash`.
        **/
       slashRewardFraction: AugmentedQuery<ApiType, () => Observable<Perbill>>;
+      /**
+       * Snapshot of nominators at the beginning of the current election window. This should only
+       * have a value when [`EraElectionStatus`] == `ElectionStatus::Open(_)`.
+       **/
+      snapshotNominators: AugmentedQuery<ApiType, () => Observable<Option<Vec<AccountId>>>>;
+      /**
+       * Snapshot of validators at the beginning of the current election window. This should only
+       * have a value when [`EraElectionStatus`] == `ElectionStatus::Open(_)`.
+       **/
+      snapshotValidators: AugmentedQuery<ApiType, () => Observable<Option<Vec<AccountId>>>>;
       /**
        * Records information about the maximum slash of a stash within a slashing span,
        * as well as how much reward has been paid out.
