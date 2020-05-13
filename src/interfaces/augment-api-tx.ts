@@ -270,7 +270,7 @@ declare module '@polkadot/api/types/submittable' {
        * - Up to one event
        * # </weight>
        **/
-      checkReceipt: AugmentedSubmittable<(proofRecord: EthReceiptProof | { index?: any; proof?: any; header_hash?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      checkReceipt: AugmentedSubmittable<(proofRecord: EthReceiptProof | { index?: any; proof?: any; headerHash?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Claim Reward for Relayers
        * # <weight>
@@ -291,7 +291,7 @@ declare module '@polkadot/api/types/submittable' {
        * - Up to one event
        * # </weight>
        **/
-      relayHeader: AugmentedSubmittable<(header: EthHeader | { parent_hash?: any; timestamp?: any; number?: any; author?: any; transactions_root?: any; uncles_hash?: any; extra_data?: any; state_root?: any; receipts_root?: any; log_bloom?: any; gas_used?: any; gas_limit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, ethashProof: Vec<DoubleNodeWithMerkleProof> | (DoubleNodeWithMerkleProof | { dag_nodes?: any; proof?: any } | string | Uint8Array)[]) => SubmittableExtrinsic<ApiType>>;
+      relayHeader: AugmentedSubmittable<(header: EthHeader | { parentHash?: any; timestamp?: any; number?: any; author?: any; transactionsRoot?: any; unclesHash?: any; extraData?: any; stateRoot?: any; receiptsRoot?: any; logBloom?: any; gasUsed?: any; gasLimit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, ethashProof: Vec<DoubleNodeWithMerkleProof> | (DoubleNodeWithMerkleProof | { dagNodes?: any; proof?: any } | string | Uint8Array)[]) => SubmittableExtrinsic<ApiType>>;
       /**
        * Remove authority
        * # <weight>
@@ -301,7 +301,7 @@ declare module '@polkadot/api/types/submittable' {
        * # </weight>
        **/
       removeAuthority: AugmentedSubmittable<(who: AccountId | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
-      resetGenesisHeader: AugmentedSubmittable<(header: EthHeader | { parent_hash?: any; timestamp?: any; number?: any; author?: any; transactions_root?: any; uncles_hash?: any; extra_data?: any; state_root?: any; receipts_root?: any; log_bloom?: any; gas_used?: any; gas_limit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, genesisDifficulty: u64 | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      resetGenesisHeader: AugmentedSubmittable<(header: EthHeader | { parentHash?: any; timestamp?: any; number?: any; author?: any; transactionsRoot?: any; unclesHash?: any; extraData?: any; stateRoot?: any; receiptsRoot?: any; logBloom?: any; gasUsed?: any; gasLimit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, genesisDifficulty: u64 | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set number of blocks finality
        * # <weight>

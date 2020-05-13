@@ -42,7 +42,7 @@ import { OpenTip, OpenTipFinder, OpenTipTip, TreasuryProposal } from '@polkadot/
 import { Multiplier } from '@polkadot/types/interfaces/txpayment';
 import { CallHash, Multisig, Timepoint } from '@polkadot/types/interfaces/utility';
 import { VestingInfo } from '@polkadot/types/interfaces/vesting';
-import { AddressT, BalanceInfo, Bloom, Common, DepositId, DoubleNodeWithMerkleProof, ElectionResultT, EthAddress, EthBlockNumber, EthHeader, EthHeaderBrief, EthNetworkType, EthReceiptProof, EthTransactionIndex, ExposureT, H128, KtonBalance, LockFor, LockReasons, LogEntry, MerkleMountainRangeRootLog, OtherAddress, OtherSignature, Power, RKT, Receipt, RedeemFor, RingBalance, Staked, StakingBalanceT, StakingLedgerT, StakingLock, TimeDepositItem, TransactionOutcome, TronAddress, TsInMs, Unbonding } from 'darwinia-polkadotjs-typegen/interfaces/darwiniaInject';
+import { AddressT, BalanceInfo, Bloom, Common, DepositId, DoubleNodeWithMerkleProof, ElectionResultT, EthAddress, EthBlockNumber, EthHeader, EthHeaderBrief, EthNetworkType, EthReceiptProof, EthTransactionIndex, ExposureT, H128, KtonBalance, LockFor, LockReasons, LogEntry, MerkleMountainRangeRootLog, OtherAddress, OtherSignature, Power, RKT, Receipt, RedeemFor, RingBalance, Staked, StakingBalanceT, StakingLedgerT, StakingLock, TimeDepositItem, TransactionOutcome, TronAddress, TsInMs, Unbonding, UsableBalance } from 'darwinia-polkadotjs-typegen/interfaces/darwiniaInject';
 
 declare module '@polkadot/types/types/registry' {
   export interface InterfaceTypes {
@@ -1823,5 +1823,8 @@ declare module '@polkadot/types/types/registry' {
     MerkleMountainRangeRootLog: MerkleMountainRangeRootLog;
     'Option<MerkleMountainRangeRootLog>': Option<MerkleMountainRangeRootLog>;
     'Vec<MerkleMountainRangeRootLog>': Vec<MerkleMountainRangeRootLog>;
+    UsableBalance: UsableBalance;
+    'Option<UsableBalance>': Option<UsableBalance>;
+    'Vec<UsableBalance>': Vec<UsableBalance>;
   }
 }

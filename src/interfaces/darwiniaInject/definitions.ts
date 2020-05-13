@@ -9,8 +9,8 @@ export default {
     "BalanceInfo": {},
     "BalanceLock": {
       "id": "LockIdentifier",
-      "lock_for": "LockFor",
-      "lock_reasons": "LockReasons",
+      "lockFor": "LockFor",
+      "lockReasons": "LockReasons",
       "amount": "Balance",
       "reasons": "Reasons"
     },
@@ -24,7 +24,7 @@ export default {
       "amount": "Balance"
     },
     "StakingLock": {
-      "staking_amount": "Balance",
+      "stakingAmount": "Balance",
       "unbondings": "Vec<Unbonding>"
     },
     "LockReasons": {
@@ -41,10 +41,10 @@ export default {
     "AccountData": {
       "free": "Balance",
       "reserved": "Balance",
-      "free_kton": "Balance",
-      "reserved_kton": "Balance",
-      "misc_frozen": "Balance",
-      "fee_frozen": "Balance"
+      "freeKton": "Balance",
+      "reservedKton": "Balance",
+      "miscFrozen": "Balance",
+      "feeFrozen": "Balance"
     },
     // "__[pallet.staking]__": {},
     "RingBalance": "Balance",
@@ -60,21 +60,21 @@ export default {
     },
     "StakingLedgerT": {
       "stash": "AccountId",
-      "active_ring": "Compact<Balance>",
-      "active_deposit_ring": "Compact<Balance>",
-      "active_kton": "Compact<Balance>",
-      "deposit_items": "Vec<TimeDepositItem>",
-      "ring_staking_lock": "StakingLock",
-      "kton_staking_lock": "StakingLock",
-      "last_reward": "Option<EraIndex>",
+      "activeRing": "Compact<Balance>",
+      "activeDepositRing": "Compact<Balance>",
+      "activeKton": "Compact<Balance>",
+      "depositItems": "Vec<TimeDepositItem>",
+      "ringStakingLock": "StakingLock",
+      "ktonStakingLock": "StakingLock",
+      "lastReward": "Option<EraIndex>",
       "total": "Compact<Balance>",
       "active": "Compact<Balance>",
       "unlocking": "Vec<UnlockChunk>"
     },
     "TimeDepositItem": {
       "value": "Compact<Balance>",
-      "start_time": "Compact<TsInMs>",
-      "expire_time": "Compact<TsInMs>"
+      "startTime": "Compact<TsInMs>",
+      "expireTime": "Compact<TsInMs>"
     },
     "RewardDestination": {
       "_enum": {
@@ -84,21 +84,21 @@ export default {
       }
     },
     "Staked": {
-      "promise_month": "u8"
+      "promiseMonth": "u8"
     },
     "ExposureT": {
-      "own_ring_balance": "Compact<Balance>",
-      "own_kton_balance": "Compact<Balance>",
-      "own_power": "Power",
-      "total_power": "Power",
+      "owningBalance": "Compact<Balance>",
+      "ownKtonBalance": "Compact<Balance>",
+      "ownPower": "Power",
+      "totalPower": "Power",
       "others": "Vec<IndividualExposure>",
       "total": "Compact<Balance>",
       "own": "Compact<Balance>"
     },
     "IndividualExposure": {
       "who": "AccountId",
-      "ring_balance": "Compact<Balance>",
-      "kton_balance": "Compact<Balance>",
+      "ringBalance": "Compact<Balance>",
+      "ktonBalance": "Compact<Balance>",
       "power": "Power",
       "value": "Compact<Balance>"
     },
@@ -110,24 +110,24 @@ export default {
     "EthTransactionIndex": "(H256, u64)",
     "EthHeaderBrief": {
       "total_difficulty": "U256",
-      "parent_hash": "H256",
+      "parentHash": "H256",
       "number": "EthBlockNumber",
       "relayer": "AccountId"
     },
     "EthBlockNumber": "u64",
     "EthHeader": {
-      "parent_hash": "H256",
+      "parentHash": "H256",
       "timestamp": "u64",
       "number": "EthBlockNumber",
       "author": "EthAddress",
-      "transactions_root": "H256",
-      "uncles_hash": "H256",
-      "extra_data": "Bytes",
-      "state_root": "H256",
-      "receipts_root": "H256",
-      "log_bloom": "Bloom",
-      "gas_used": "U256",
-      "gas_limit": "U256",
+      "transactionsRoot": "H256",
+      "unclesHash": "H256",
+      "extraData": "Bytes",
+      "stateRoot": "H256",
+      "receiptsRoot": "H256",
+      "logBloom": "Bloom",
+      "gasUsed": "U256",
+      "gasLimit": "U256",
       "difficulty": "U256",
       "seal": "Vec<Bytes>",
       "hash": "H256"
@@ -136,15 +136,15 @@ export default {
     "Bloom": "[u8; 256; Bloom]",
     "H128": "[u8; 16; H128]",
     "DoubleNodeWithMerkleProof": {
-      "dag_nodes": "(H512, H512)",
+      "dagNodes": "(H512, H512)",
       "proof": "Vec<H128>"
     },
     "ElectionResultT": {},
     "LogEntry": {},
     "TransactionOutcome": {},
     "Receipt": {
-      "gas_used": "U256",
-      "log_bloom": "Bloom",
+      "gasUsed": "U256",
+      "logBloom": "Bloom",
       "logs": "Vec<LogEntry>",
       "outcome": "TransactionOutcome"
     },
@@ -164,7 +164,7 @@ export default {
     "EthReceiptProof": {
       "index": "u64",
       "proof": "Bytes",
-      "header_hash": "H256"
+      "headerHash": "H256"
     },
     // "__[pallet.claims]__": {},
     "OtherSignature": {
@@ -185,7 +185,17 @@ export default {
     // "__[pallet.header-mmr]__": {},
     "MerkleMountainRangeRootLog": {
       "prefix": "[u8; 4; Prefix]",
-      "mmr_root": "Hash"
+      "mmrRoot": "Hash"
+    },
+    "ChainProperties": {
+      "ss58Format": "Option<u8>",
+      "tokenDecimals": "Option<u32>",
+      "tokenSymbol": "Option<Text>",
+      "ktonTokenDecimals": "Option<u32>",
+      "ktonTokenSymbol": "Option<Text>"
+    },
+    "UsableBalance": {
+      "usableBalance": "Balance"
     }
   }
 };

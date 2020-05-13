@@ -18,7 +18,7 @@ async function main(): Promise<void> {
   // extract all types from definitions - fast and dirty approach, flatted on 'types'
   const types = Object.values(definitions).reduce((res, { types }): object => ({ ...res, ...types }), {});
   // const provider = new WsProvider('wss://crab.darwinia.network');
-  const provider = new WsProvider('ws://175.24.95.3:9944');
+  const provider = new WsProvider('wss://crab.darwinia.network');
 
   const api = await ApiPromise.create({
     provider,

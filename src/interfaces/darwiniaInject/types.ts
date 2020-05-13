@@ -3,7 +3,7 @@
 
 import { ITuple } from '@polkadot/types/types';
 import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
-import { Bytes, U256, u32, u64, u8 } from '@polkadot/types/primitive';
+import { Bytes, Text, U256, u32, u64, u8 } from '@polkadot/types/primitive';
 import { Reasons } from '@polkadot/types/interfaces/balances';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, LockIdentifier } from '@polkadot/types/interfaces/runtime';
@@ -13,10 +13,10 @@ import { EraIndex, UnlockChunk } from '@polkadot/types/interfaces/staking';
 export interface AccountData extends Struct {
   readonly free: Balance;
   readonly reserved: Balance;
-  readonly free_kton: Balance;
-  readonly reserved_kton: Balance;
-  readonly misc_frozen: Balance;
-  readonly fee_frozen: Balance;
+  readonly freeKton: Balance;
+  readonly reservedKton: Balance;
+  readonly miscFrozen: Balance;
+  readonly feeFrozen: Balance;
 }
 
 /** @name Address */
@@ -31,14 +31,23 @@ export interface BalanceInfo extends Struct {}
 /** @name BalanceLock */
 export interface BalanceLock extends Struct {
   readonly id: LockIdentifier;
-  readonly lock_for: LockFor;
-  readonly lock_reasons: LockReasons;
+  readonly lockFor: LockFor;
+  readonly lockReasons: LockReasons;
   readonly amount: Balance;
   readonly reasons: Reasons;
 }
 
 /** @name Bloom */
 export interface Bloom extends U8aFixed {}
+
+/** @name ChainProperties */
+export interface ChainProperties extends Struct {
+  readonly ss58Format: Option<u8>;
+  readonly tokenDecimals: Option<u32>;
+  readonly tokenSymbol: Option<Text>;
+  readonly ktonTokenDecimals: Option<u32>;
+  readonly ktonTokenSymbol: Option<Text>;
+}
 
 /** @name Common */
 export interface Common extends Struct {
@@ -50,7 +59,7 @@ export interface DepositId extends U256 {}
 
 /** @name DoubleNodeWithMerkleProof */
 export interface DoubleNodeWithMerkleProof extends Struct {
-  readonly dag_nodes: ITuple<[H512, H512]>;
+  readonly dagNodes: ITuple<[H512, H512]>;
   readonly proof: Vec<H128>;
 }
 
@@ -68,18 +77,18 @@ export interface EthBlockNumber extends u64 {}
 
 /** @name EthHeader */
 export interface EthHeader extends Struct {
-  readonly parent_hash: H256;
+  readonly parentHash: H256;
   readonly timestamp: u64;
   readonly number: EthBlockNumber;
   readonly author: EthAddress;
-  readonly transactions_root: H256;
-  readonly uncles_hash: H256;
-  readonly extra_data: Bytes;
-  readonly state_root: H256;
-  readonly receipts_root: H256;
-  readonly log_bloom: Bloom;
-  readonly gas_used: U256;
-  readonly gas_limit: U256;
+  readonly transactionsRoot: H256;
+  readonly unclesHash: H256;
+  readonly extraData: Bytes;
+  readonly stateRoot: H256;
+  readonly receiptsRoot: H256;
+  readonly logBloom: Bloom;
+  readonly gasUsed: U256;
+  readonly gasLimit: U256;
   readonly difficulty: U256;
   readonly seal: Vec<Bytes>;
   readonly hash: H256;
@@ -88,7 +97,7 @@ export interface EthHeader extends Struct {
 /** @name EthHeaderBrief */
 export interface EthHeaderBrief extends Struct {
   readonly total_difficulty: U256;
-  readonly parent_hash: H256;
+  readonly parentHash: H256;
   readonly number: EthBlockNumber;
   readonly relayer: AccountId;
 }
@@ -103,7 +112,7 @@ export interface EthNetworkType extends Enum {
 export interface EthReceiptProof extends Struct {
   readonly index: u64;
   readonly proof: Bytes;
-  readonly header_hash: H256;
+  readonly headerHash: H256;
 }
 
 /** @name EthTransactionIndex */
@@ -111,10 +120,10 @@ export interface EthTransactionIndex extends ITuple<[H256, u64]> {}
 
 /** @name ExposureT */
 export interface ExposureT extends Struct {
-  readonly own_ring_balance: Compact<Balance>;
-  readonly own_kton_balance: Compact<Balance>;
-  readonly own_power: Power;
-  readonly total_power: Power;
+  readonly owningBalance: Compact<Balance>;
+  readonly ownKtonBalance: Compact<Balance>;
+  readonly ownPower: Power;
+  readonly totalPower: Power;
   readonly others: Vec<IndividualExposure>;
   readonly total: Compact<Balance>;
   readonly own: Compact<Balance>;
@@ -126,8 +135,8 @@ export interface H128 extends U8aFixed {}
 /** @name IndividualExposure */
 export interface IndividualExposure extends Struct {
   readonly who: AccountId;
-  readonly ring_balance: Compact<Balance>;
-  readonly kton_balance: Compact<Balance>;
+  readonly ringBalance: Compact<Balance>;
+  readonly ktonBalance: Compact<Balance>;
   readonly power: Power;
   readonly value: Compact<Balance>;
 }
@@ -156,7 +165,7 @@ export interface LogEntry extends Struct {}
 /** @name MerkleMountainRangeRootLog */
 export interface MerkleMountainRangeRootLog extends Struct {
   readonly prefix: U8aFixed;
-  readonly mmr_root: Hash;
+  readonly mmrRoot: Hash;
 }
 
 /** @name OtherAddress */
@@ -180,8 +189,8 @@ export interface Power extends u32 {}
 
 /** @name Receipt */
 export interface Receipt extends Struct {
-  readonly gas_used: U256;
-  readonly log_bloom: Bloom;
+  readonly gasUsed: U256;
+  readonly logBloom: Bloom;
   readonly logs: Vec<LogEntry>;
   readonly outcome: TransactionOutcome;
 }
@@ -215,7 +224,7 @@ export interface RKT extends Struct {
 
 /** @name Staked */
 export interface Staked extends Struct {
-  readonly promise_month: u8;
+  readonly promiseMonth: u8;
 }
 
 /** @name StakingBalanceT */
@@ -229,13 +238,13 @@ export interface StakingBalanceT extends Enum {
 /** @name StakingLedgerT */
 export interface StakingLedgerT extends Struct {
   readonly stash: AccountId;
-  readonly active_ring: Compact<Balance>;
-  readonly active_deposit_ring: Compact<Balance>;
-  readonly active_kton: Compact<Balance>;
-  readonly deposit_items: Vec<TimeDepositItem>;
-  readonly ring_staking_lock: StakingLock;
-  readonly kton_staking_lock: StakingLock;
-  readonly last_reward: Option<EraIndex>;
+  readonly activeRing: Compact<Balance>;
+  readonly activeDepositRing: Compact<Balance>;
+  readonly activeKton: Compact<Balance>;
+  readonly depositItems: Vec<TimeDepositItem>;
+  readonly ringStakingLock: StakingLock;
+  readonly ktonStakingLock: StakingLock;
+  readonly lastReward: Option<EraIndex>;
   readonly total: Compact<Balance>;
   readonly active: Compact<Balance>;
   readonly unlocking: Vec<UnlockChunk>;
@@ -243,15 +252,15 @@ export interface StakingLedgerT extends Struct {
 
 /** @name StakingLock */
 export interface StakingLock extends Struct {
-  readonly staking_amount: Balance;
+  readonly stakingAmount: Balance;
   readonly unbondings: Vec<Unbonding>;
 }
 
 /** @name TimeDepositItem */
 export interface TimeDepositItem extends Struct {
   readonly value: Compact<Balance>;
-  readonly start_time: Compact<TsInMs>;
-  readonly expire_time: Compact<TsInMs>;
+  readonly startTime: Compact<TsInMs>;
+  readonly expireTime: Compact<TsInMs>;
 }
 
 /** @name TransactionOutcome */
@@ -267,6 +276,11 @@ export interface TsInMs extends u64 {}
 export interface Unbonding extends Struct {
   readonly amount: Balance;
   readonly moment: BlockNumber;
+}
+
+/** @name UsableBalance */
+export interface UsableBalance extends Struct {
+  readonly usableBalance: Balance;
 }
 
 export type PHANTOM_DARWINIAINJECT = 'darwiniaInject';
