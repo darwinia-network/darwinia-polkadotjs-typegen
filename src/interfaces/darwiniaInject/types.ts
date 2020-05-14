@@ -4,10 +4,9 @@
 import { ITuple } from '@polkadot/types/types';
 import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Text, U256, u32, u64, u8 } from '@polkadot/types/primitive';
-import { Reasons } from '@polkadot/types/interfaces/balances';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, LockIdentifier } from '@polkadot/types/interfaces/runtime';
-import { EraIndex, UnlockChunk } from '@polkadot/types/interfaces/staking';
+import { EraIndex } from '@polkadot/types/interfaces/staking';
 
 /** @name AccountData */
 export interface AccountData extends Struct {
@@ -32,8 +31,6 @@ export interface BalanceInfo extends Struct {}
 export interface BalanceLock extends Struct {
   readonly id: LockIdentifier;
   readonly lockFor: LockFor;
-  readonly lockReasons: LockReasons;
-  readonly amount: Balance;
   readonly reasons: Reasons;
 }
 
@@ -125,8 +122,6 @@ export interface ExposureT extends Struct {
   readonly ownPower: Power;
   readonly totalPower: Power;
   readonly others: Vec<IndividualExposure>;
-  readonly total: Compact<Balance>;
-  readonly own: Compact<Balance>;
 }
 
 /** @name H128 */
@@ -138,7 +133,6 @@ export interface IndividualExposure extends Struct {
   readonly ringBalance: Compact<Balance>;
   readonly ktonBalance: Compact<Balance>;
   readonly power: Power;
-  readonly value: Compact<Balance>;
 }
 
 /** @name KtonBalance */
@@ -150,13 +144,6 @@ export interface LockFor extends Enum {
   readonly asCommon: Common;
   readonly isStaking: boolean;
   readonly asStaking: StakingLock;
-}
-
-/** @name LockReasons */
-export interface LockReasons extends Enum {
-  readonly isFee: boolean;
-  readonly isMisc: boolean;
-  readonly isAll: boolean;
 }
 
 /** @name LogEntry */
@@ -186,6 +173,13 @@ export interface OtherSignature extends Enum {
 
 /** @name Power */
 export interface Power extends u32 {}
+
+/** @name Reasons */
+export interface Reasons extends Enum {
+  readonly isFee: boolean;
+  readonly isMisc: boolean;
+  readonly isAll: boolean;
+}
 
 /** @name Receipt */
 export interface Receipt extends Struct {
@@ -244,10 +238,7 @@ export interface StakingLedgerT extends Struct {
   readonly depositItems: Vec<TimeDepositItem>;
   readonly ringStakingLock: StakingLock;
   readonly ktonStakingLock: StakingLock;
-  readonly lastReward: Option<EraIndex>;
-  readonly total: Compact<Balance>;
-  readonly active: Compact<Balance>;
-  readonly unlocking: Vec<UnlockChunk>;
+  readonly claimedRewards: Vec<EraIndex>;
 }
 
 /** @name StakingLock */

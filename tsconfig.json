@@ -16,7 +16,8 @@
     "noUnusedLocals": true,
     "noImplicitReturns": true,
     "paths": {
-      "darwinia-polkadotjs-typegen/*": ["src/*"],
+      "@darwinia/types": ["src"],
+      "@darwinia/types/*": ["src/*"],
       "@polkadot/api/augment": ["src/interfaces/augment-api.ts"],
       "@polkadot/types/augment": ["src/interfaces/augment-types.ts"]
     },

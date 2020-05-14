@@ -3,3 +3,4 @@
 //   https://github.com/hicommonwealth/edgeware-node-types/tree/master/types
 
 export { default as darwiniaInject } from './darwiniaInject/definitions';
+export { default as balances } from './balances/definitions';
