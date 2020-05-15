@@ -9,8 +9,8 @@
   "private": true,
   "scripts": {
     "build": "yarn generate:defs && yarn generate:meta",
-    "generate:defs": "ts-node --skip-project node_modules/.bin/polkadot-types-from-defs --package @darwinia/types/interfaces --input ./src/interfaces",
-    "generate:meta": "ts-node --skip-project node_modules/.bin/polkadot-types-from-chain --package @darwinia/types/interfaces --endpoint ./darwinia.json --output ./src/interfaces --strict",
+    "generate:defs": "ts-node --skip-project node_modules/@polkadot/typegen/scripts/polkadot-types-from-defs --package @darwinia/types/interfaces --input ./src/interfaces",
+    "generate:meta": "ts-node --skip-project node_modules/@polkadot/typegen/scripts/polkadot-types-from-chain --package @darwinia/types/interfaces --endpoint ./darwinia.json --output ./src/interfaces",
     "lint": "tsc --noEmit --pretty"
   },
   "dependencies": {
