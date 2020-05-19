@@ -6,6 +6,8 @@ import './interfaces/augment-types';
 
 // external imports
 import { ApiPromise, WsProvider } from '@polkadot/api';
+import createPair from '@polkadot/keyring/pair';
+import { cryptoWaitReady, encodeAddress as toSS58, mnemonicToMiniSecret, schnorrkelKeypairFromSeed } from '@polkadot/util-crypto';
 
 // our local stuff
 import * as definitions from './interfaces/definitions';
@@ -29,11 +31,39 @@ async function main(): Promise<void> {
   });
 
   // get a query
-  const accountInfo = await api.query.system.account('5HE1gjo5cRP5Xzf42zrc3gExws6zqrtnMsHTi3jZ5KbLpKnd');
+  const accountInfo = await api.query.system.account('5D9gmgGeNAmG3hTgE89ksEkRRxdxk5CF5BDoLsgLjeaW94Et');
 
   console.log(JSON.stringify(accountInfo, null, 2));
 
-  api.disconnect()
-}
+  const BOB = '5D9gmgGeNAmG3hTgE89ksEkRRxdxk5CF5BDoLsgLjeaW94Et';
+
+  const transferAmount = '123456789';
+
+  cryptoWaitReady().then(() => {
+    // Create a extrinsic, transferring randomAmount units to Bob.
+    const transfer = api.tx.balances.transfer(BOB, transferAmount);
+
+    const seed = mnemonicToMiniSecret('*** mnemonic ***');
+    const keyPair = schnorrkelKeypairFromSeed(seed);
+
+    const alice = createPair({ toSS58, type: 'sr25519' }, { publicKey: keyPair.publicKey, secretKey: keyPair.secretKey }, {});
+
+    transfer.signAndSend(alice, ({ events = [], status }) => {
+      if (status.isInBlock) {
+        console.log('Successful transfer of ' + transferAmount + ' with hash ' + status.asInBlock.toHex());
+      } else {
+        console.log('Status of transfer: ' + status.type);
+      }
+
+      events.forEach(({ phase, event: { data, method, section } }) => {
+        console.log(phase.toString() + ' : ' + section + '.' + method + ' ' + data.toString());
+        if(status.type === 'Finalized' && section + '.' + method === 'system.ExtrinsicSuccess') {
+          console.log('transfer success');
+          api.disconnect();
+        }
+      });
+    });
+  });
+};
 
 main();
