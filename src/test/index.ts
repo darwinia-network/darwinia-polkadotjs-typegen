@@ -171,11 +171,11 @@ async function main(): Promise<void> {
       console.log(`-----event section.method----- \n`, `${event.section}.${event.method}`)
       console.log(`-----event detail----- \n`, JSON.stringify(event, null ,2));
 
-      // Confirm whether a cring recharge transaction is successful
+      // Confirm whether a cring deposit transaction is successful
       // 1. The block is Finalized
-      // 2. In extrinsic ${section}.${Method} === 'balances.transfer'
-      // 3. The current extrinsic event has ${event.section}.${Event.method} === 'balances.Transfer'
-      // 4. The current extrinsic event has ${event.section}.${Event.method} === 'system.ExtrinsicSuccess'
+      // 2. In extrinsic ${section}.${method} === 'balances.transfer'
+      // 3. The current extrinsic event has ${event.section}.${event.method} === 'balances.Transfer'
+      // 4. The current extrinsic event has ${event.section}.${event.method} === 'system.ExtrinsicSuccess'
     });
   });
 
