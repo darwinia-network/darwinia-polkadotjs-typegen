@@ -5,8 +5,8 @@ import { ITuple } from '@polkadot/types/types';
 import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Text, U256, u32, u64, u8 } from '@polkadot/types/primitive';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
-import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, LockIdentifier } from '@polkadot/types/interfaces/runtime';
 import { EraIndex } from '@polkadot/types/interfaces/staking';
+import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, LockIdentifier } from '@polkadot/types/interfaces/runtime';
 
 /** @name AccountData */
 export interface AccountData extends Struct {
@@ -117,7 +117,7 @@ export interface EthTransactionIndex extends ITuple<[H256, u64]> {}
 
 /** @name ExposureT */
 export interface ExposureT extends Struct {
-  readonly owningBalance: Compact<Balance>;
+  readonly ownRingBalance: Compact<Balance>;
   readonly ownKtonBalance: Compact<Balance>;
   readonly ownPower: Power;
   readonly totalPower: Power;
@@ -216,6 +216,12 @@ export interface RKT extends Struct {
   readonly k: Balance;
 }
 
+/** @name SpanRecord */
+export interface SpanRecord extends Struct {
+  readonly slashed: RKT;
+  readonly paidOut: RKT;
+}
+
 /** @name Staked */
 export interface Staked extends Struct {
   readonly promiseMonth: u8;
@@ -267,11 +273,6 @@ export interface TsInMs extends u64 {}
 export interface Unbonding extends Struct {
   readonly amount: Balance;
   readonly moment: BlockNumber;
-}
-
-/** @name UsableBalance */
-export interface UsableBalance extends Struct {
-  readonly usableBalance: Balance;
 }
 
 export type PHANTOM_DARWINIAINJECT = 'darwiniaInject';

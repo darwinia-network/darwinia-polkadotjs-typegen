@@ -74,7 +74,7 @@ export default {
       promiseMonth: 'u8'
     },
     ExposureT: {
-      owningBalance: 'Compact<Balance>',
+      ownRingBalance: 'Compact<Balance>',
       ownKtonBalance: 'Compact<Balance>',
       ownPower: 'Power',
       totalPower: 'Power',
@@ -175,9 +175,10 @@ export default {
       ktonTokenDecimals: 'Option<u32>',
       ktonTokenSymbol: 'Option<Text>'
     },
-    UsableBalance: {
-      usableBalance: 'Balance'
-    }
+    SpanRecord: {
+      slashed: 'RKT',
+      paidOut: 'RKT'
+    },
   },
   rpc: {
 

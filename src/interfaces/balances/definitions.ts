@@ -20,9 +20,12 @@ export default {
           type: 'AccountId'
         }
       ],
-      type: 'usableBalance'
+      type: 'UsableBalance'
     }
   },
   types: {
+    UsableBalance: {
+      usableBalance: 'Balance'
+    },
   }
 };
