@@ -4,3 +4,4 @@
 
 export { default as darwiniaInject } from './darwiniaInject/definitions';
 export { default as balances } from './balances/definitions';
+export { default as staking } from './staking/definitions';
