@@ -156,6 +156,7 @@ async function main(): Promise<void> {
     // }
     // #############################
     console.log(`-----extrinsic(${section}.${method})----- \n`, JSON.stringify({ meta, method, section }, null, 2));
+    console.log(`-----extrinsic hash----- \n`, value.hash.toHex());
 
     const thisEvents = filterEvents(index, events);
     
