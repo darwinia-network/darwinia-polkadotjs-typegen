@@ -36,6 +36,7 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
     };
     claims: {
       [index: string]: AugmentedConst<object & Codec>;
+      moduleId: AugmentedConst<ModuleId>;
       /**
        * The Prefix that is used in signed Ethereum messages for this network
        **/
@@ -171,6 +172,10 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
        * The base weight of executing a block, independent of the transactions in the block.
        **/
       blockExecutionWeight: AugmentedConst<Weight>;
+      /**
+       * The maximum number of blocks to allow in mortal eras.
+       **/
+      blockHashCount: AugmentedConst<BlockNumber>;
       /**
        * The weight of runtime database operations the runtime can invoke.
        **/

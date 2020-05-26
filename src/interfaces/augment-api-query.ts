@@ -6,17 +6,17 @@ import { Option, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Data, bool, u32, u64 } from '@polkadot/types/primitive';
 import { AddressT, BalanceInfo, ElectionResultT, EthAddress, EthHeader, EthReceiptProof, EthTransactionIndex, ExposureT, H128, KtonBalance, Power, RKT, RingBalance, StakingLedgerT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
 import { UncleEntryItem } from '@polkadot/types/interfaces/authorship';
-import { BabeAuthorityWeight, MaybeVrf, Randomness } from '@polkadot/types/interfaces/babe';
+import { BabeAuthorityWeight, MaybeRandomness, Randomness } from '@polkadot/types/interfaces/babe';
 import { BalanceLock } from '@polkadot/types/interfaces/balances';
 import { ProposalIndex, Votes } from '@polkadot/types/interfaces/collective';
-import { AuthorityId, RawVRFOutput } from '@polkadot/types/interfaces/consensus';
+import { AuthorityId } from '@polkadot/types/interfaces/consensus';
 import { Proposal } from '@polkadot/types/interfaces/democracy';
 import { SetId, StoredPendingChange, StoredState } from '@polkadot/types/interfaces/grandpa';
 import { RegistrarInfo, Registration } from '@polkadot/types/interfaces/identity';
 import { AuthIndex } from '@polkadot/types/interfaces/imOnline';
 import { DeferredOffenceOf, Kind, OffenceDetails, OpaqueTimeSlot, ReportIdOf } from '@polkadot/types/interfaces/offences';
 import { ActiveRecovery, RecoveryConfig } from '@polkadot/types/interfaces/recovery';
-import { AccountId, AccountIndex, Balance, BalanceOf, BlockNumber, H256, Hash, KeyTypeId, Moment, Perbill, ValidatorId, Weight } from '@polkadot/types/interfaces/runtime';
+import { AccountId, AccountIndex, Balance, BalanceOf, BlockNumber, ExtrinsicsWeight, H256, Hash, KeyTypeId, Moment, Perbill, ValidatorId } from '@polkadot/types/interfaces/runtime';
 import { Keys, SessionIndex } from '@polkadot/types/interfaces/session';
 import { Bid, BidKind, SocietyVote, StrikeCount, VouchingStatus } from '@polkadot/types/interfaces/society';
 import { ActiveEraInfo, ElectionStatus, EraIndex, EraRewardPoints, Forcing, Nominations, PhragmenScore, RewardDestination, SlashingSpans, SpanIndex, SpanRecord, UnappliedSlash, ValidatorPrefs } from '@polkadot/types/interfaces/staking';
@@ -66,7 +66,7 @@ declare module '@polkadot/api/types/storage' {
        * Temporary value (cleared at block finalization) which is `Some`
        * if per-block initialization has already been called for current block.
        **/
-      initialized: AugmentedQuery<ApiType, () => Observable<Option<MaybeVrf>>> & QueryableStorageEntry<ApiType>;
+      initialized: AugmentedQuery<ApiType, () => Observable<Option<MaybeRandomness>>> & QueryableStorageEntry<ApiType>;
       /**
        * How late the current block is compared to its parent.
        * 
@@ -104,7 +104,7 @@ declare module '@polkadot/api/types/storage' {
        * epoch.
        **/
       segmentIndex: AugmentedQuery<ApiType, () => Observable<u32>> & QueryableStorageEntry<ApiType>;
-      underConstruction: AugmentedQuery<ApiType, (arg: u32 | AnyNumber | Uint8Array) => Observable<Vec<RawVRFOutput>>> & QueryableStorageEntry<ApiType>;
+      underConstruction: AugmentedQuery<ApiType, (arg: u32 | AnyNumber | Uint8Array) => Observable<Vec<Randomness>>> & QueryableStorageEntry<ApiType>;
     };
     balances: {
       [index: string]: QueryableStorageEntry<ApiType>;
@@ -131,7 +131,6 @@ declare module '@polkadot/api/types/storage' {
       [index: string]: QueryableStorageEntry<ApiType>;
       claimsFromEth: AugmentedQuery<ApiType, (arg: AddressT | string | Uint8Array) => Observable<Option<RingBalance>>> & QueryableStorageEntry<ApiType>;
       claimsFromTron: AugmentedQuery<ApiType, (arg: AddressT | string | Uint8Array) => Observable<Option<RingBalance>>> & QueryableStorageEntry<ApiType>;
-      total: AugmentedQuery<ApiType, () => Observable<RingBalance>> & QueryableStorageEntry<ApiType>;
     };
     council: {
       [index: string]: QueryableStorageEntry<ApiType>;
@@ -639,7 +638,7 @@ declare module '@polkadot/api/types/storage' {
        **/
       isCurrentSessionFinal: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
       /**
-       * Total *Kton* in pool.
+       * Total *KTON* in pool.
        **/
       ktonPool: AugmentedQuery<ApiType, () => Observable<KtonBalance>> & QueryableStorageEntry<ApiType>;
       /**
@@ -680,7 +679,7 @@ declare module '@polkadot/api/types/storage' {
        **/
       queuedScore: AugmentedQuery<ApiType, () => Observable<Option<PhragmenScore>>> & QueryableStorageEntry<ApiType>;
       /**
-       * Total *Ring* in pool.
+       * Total *RING* in pool.
        **/
       ringPool: AugmentedQuery<ApiType, () => Observable<RingBalance>> & QueryableStorageEntry<ApiType>;
       /**
@@ -744,9 +743,9 @@ declare module '@polkadot/api/types/storage' {
        **/
       allExtrinsicsLen: AugmentedQuery<ApiType, () => Observable<Option<u32>>> & QueryableStorageEntry<ApiType>;
       /**
-       * Total weight for all extrinsics put together, for the current block.
+       * Total weight for all extrinsics for the current block.
        **/
-      allExtrinsicsWeight: AugmentedQuery<ApiType, () => Observable<Option<Weight>>> & QueryableStorageEntry<ApiType>;
+      allExtrinsicsWeight: AugmentedQuery<ApiType, () => Observable<ExtrinsicsWeight>> & QueryableStorageEntry<ApiType>;
       /**
        * Map of block numbers to block hashes.
        **/
