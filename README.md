@@ -4,6 +4,48 @@ This is a sample TypeScript project [with full source & config on GithHub](https
 
 **NOTE** This is built using the updates in the `1.4.0` api track and as such it uses the latest (at the time of writing) `@polkadot/api 1.4.0`. If you want to play on your own, it is also suggested that you use the `1.4+` series since some generation types have moved around internally, making it easier to augment.
 
+## Useage
+
+```js
+// We need to import the augmented definitions "somewhere" in our project, however since we have
+// it in tsconfig as an override and the api/types has imports, it is not strictly required here.
+// Because of the tsconfig override, we could import from '@polkadot/{api, types}/augment'
+import '../interfaces/augment-api';
+import '../interfaces/augment-types';
+
+// external imports
+import { ApiPromise, WsProvider } from '@polkadot/api';
+import { HeaderExtended } from '@polkadot/api-derive';
+import createPair from '@polkadot/keyring/pair';
+import { cryptoWaitReady, encodeAddress as toSS58, mnemonicToMiniSecret, schnorrkelKeypairFromSeed } from '@polkadot/util-crypto';
+import { EventRecord, SignedBlock } from '@polkadot/types/interfaces';
+
+// our local stuff
+import * as definitions from '../interfaces/definitions';
+import jsonrpc from '../interfaces/jsonrpc';
+
+async function main(): Promise<void> {
+  // extract all types from definitions - fast and dirty approach, flatted on 'types'
+  const types = Object.values(definitions).reduce((res, { types }): object => ({ ...res, ...types }), {});
+  const provider = new WsProvider('wss://crab.darwinia.network');
+
+  const api = await ApiPromise.create({
+    provider,
+    rpc: {
+      ...jsonrpc
+    },
+    types: {
+      ...types,
+      // aliasses that don't do well as part of interfaces
+      // chain-specific overrides
+    }
+  });
+
+  // get a query
+  const accountInfo = await api.query.system.account('5D9gmgGeNAmG3hTgE89ksEkRRxdxk5CF5BDoLsgLjeaW94Et');
+
+```
+
 ## Packages
 
 For the packages we need from the `@polkadot/*` we have added `@polkadot/api` (we want to do API stuff) and `@polkadot/typegen` (to generate the actual interfaces). So our scripts and dependencies inside `package.json` contain the following -
