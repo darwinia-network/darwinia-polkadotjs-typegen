@@ -5,8 +5,9 @@ import { ITuple } from '@polkadot/types/types';
 import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Text, U256, u32, u64, u8 } from '@polkadot/types/primitive';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
+import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, Index, LockIdentifier } from '@polkadot/types/interfaces/runtime';
 import { EraIndex } from '@polkadot/types/interfaces/staking';
-import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, LockIdentifier } from '@polkadot/types/interfaces/runtime';
+import { RefCount } from '@polkadot/types/interfaces/system';
 
 /** @name AccountData */
 export interface AccountData extends Struct {
@@ -16,6 +17,13 @@ export interface AccountData extends Struct {
   readonly reservedKton: Balance;
   readonly miscFrozen: Balance;
   readonly feeFrozen: Balance;
+}
+
+/** @name AccountInfo */
+export interface AccountInfo extends Struct {
+  readonly nonce: Index;
+  readonly refcount: RefCount;
+  readonly data: AccountData;
 }
 
 /** @name Address */

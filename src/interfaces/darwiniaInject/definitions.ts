@@ -180,6 +180,11 @@ export default {
       slashed: 'RKT',
       paidOut: 'RKT'
     },
+    AccountInfo: {
+      nonce: 'Index', 
+      refcount: 'RefCount',
+      data: 'AccountData'
+    }
   },
   rpc: {
 
