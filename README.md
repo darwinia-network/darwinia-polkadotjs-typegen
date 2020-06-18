@@ -4,7 +4,7 @@ This is a sample TypeScript project [with full source & config on GithHub](https
 
 **NOTE** This is built using the updates in the `1.4.0` api track and as such it uses the latest (at the time of writing) `@polkadot/api 1.4.0`. If you want to play on your own, it is also suggested that you use the `1.4+` series since some generation types have moved around internally, making it easier to augment.
 
-## Useage
+## Usage
 ```bash
 yarn add @darwinia/typegen
 ```
