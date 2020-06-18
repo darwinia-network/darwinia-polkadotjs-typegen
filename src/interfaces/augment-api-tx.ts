@@ -7,6 +7,7 @@ import { Bytes, Data, bool, u16, u32, u64, u8 } from '@polkadot/types/primitive'
 import { DoubleNodeWithMerkleProof, EthAddress, EthHeader, EthReceiptProof, KtonBalance, OtherAddress, OtherSignature, RedeemFor, RingBalance, StakingBalanceT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
 import { MemberCount, ProposalIndex } from '@polkadot/types/interfaces/collective';
 import { Proposal } from '@polkadot/types/interfaces/democracy';
+import { DefunctVoter, Renouncing } from '@polkadot/types/interfaces/elections';
 import { Extrinsic, Signature } from '@polkadot/types/interfaces/extrinsics';
 import { EquivocationProof, KeyOwnerProof } from '@polkadot/types/interfaces/grandpa';
 import { IdentityFields, IdentityInfo, IdentityJudgement, RegistrarIndex } from '@polkadot/types/interfaces/identity';
@@ -18,7 +19,6 @@ import { CompactAssignments, EraIndex, PhragmenScore, RewardDestination, Validat
 import { Key } from '@polkadot/types/interfaces/system';
 import { Timepoint } from '@polkadot/types/interfaces/utility';
 import { ApiTypes, SubmittableExtrinsic } from '@polkadot/api/types';
-import { DefunctVoter, Renouncing } from '@polkadot/types/interfaces/elections';
 
 declare module '@polkadot/api/types/submittable' {
   export interface AugmentedSubmittables<ApiType> {
@@ -301,7 +301,7 @@ declare module '@polkadot/api/types/submittable' {
        * Weight note: The call into changeMembers need to be accounted for.
        * </weight>
        **/
-      renounceCandidacy: AugmentedSubmittable<(renouncing: Renouncing | null) => SubmittableExtrinsic<ApiType>>;
+      renounceCandidacy: AugmentedSubmittable<(renouncing: Renouncing | { Member: any } | { RunnerUp: any } | { Candidate: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Report `target` for being an defunct voter. In case of a valid report, the reporter is
        * rewarded by the bond amount of `target`. Otherwise, the reporter itself is removed and
@@ -331,7 +331,7 @@ declare module '@polkadot/api/types/submittable' {
        * Note: the db access is worse with respect to db, which is when the report is correct.
        * # </weight>
        **/
-      reportDefunctVoter: AugmentedSubmittable<(defunct: DefunctVoter | null) => SubmittableExtrinsic<ApiType>>;
+      reportDefunctVoter: AugmentedSubmittable<(defunct: DefunctVoter | { who?: any; voteCount?: any; candidateCount?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Submit oneself for candidacy.
        * 

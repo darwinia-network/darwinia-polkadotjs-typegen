@@ -115,6 +115,9 @@ export interface EthReceiptProof extends Struct {
 /** @name EthTransactionIndex */
 export interface EthTransactionIndex extends ITuple<[H256, u64]> {}
 
+/** @name Exposure */
+export interface Exposure extends ExposureT {}
+
 /** @name ExposureT */
 export interface ExposureT extends Struct {
   readonly ownRingBalance: Compact<Balance>;

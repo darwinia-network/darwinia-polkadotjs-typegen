@@ -80,6 +80,7 @@ export default {
       totalPower: 'Power',
       others: 'Vec<IndividualExposure>'
     },
+    Exposure: "ExposureT",
     IndividualExposure: {
       who: 'AccountId',
       ringBalance: 'Compact<Balance>',
