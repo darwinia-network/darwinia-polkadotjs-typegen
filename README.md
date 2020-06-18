@@ -5,28 +5,23 @@ This is a sample TypeScript project [with full source & config on GithHub](https
 **NOTE** This is built using the updates in the `1.4.0` api track and as such it uses the latest (at the time of writing) `@polkadot/api 1.4.0`. If you want to play on your own, it is also suggested that you use the `1.4+` series since some generation types have moved around internally, making it easier to augment.
 
 ## Useage
-
+```bash
+yarn add @darwinia/typegen
+```
 ```js
-// We need to import the augmented definitions "somewhere" in our project, however since we have
-// it in tsconfig as an override and the api/types has imports, it is not strictly required here.
-// Because of the tsconfig override, we could import from '@polkadot/{api, types}/augment'
-import '../interfaces/augment-api';
-import '../interfaces/augment-types';
+const { ApiPromise, WsProvider } = require('@polkadot/api');
+const createPair = require('@polkadot/keyring/pair').default;
+const { cryptoWaitReady, encodeAddress, mnemonicToMiniSecret, schnorrkelKeypairFromSeed } = require('@polkadot/util-crypto');
 
-// external imports
-import { ApiPromise, WsProvider } from '@polkadot/api';
-import { HeaderExtended } from '@polkadot/api-derive';
-import createPair from '@polkadot/keyring/pair';
-import { cryptoWaitReady, encodeAddress as toSS58, mnemonicToMiniSecret, schnorrkelKeypairFromSeed } from '@polkadot/util-crypto';
-import { EventRecord, SignedBlock } from '@polkadot/types/interfaces';
+const toSS58 = encodeAddress;
 
 // our local stuff
-import * as definitions from '../interfaces/definitions';
-import jsonrpc from '../interfaces/jsonrpc';
-
-async function main(): Promise<void> {
+const definitions = require('@darwinia/typegen/interfaces/definitions');
+const jsonrpc = require('@darwinia/typegen/interfaces/jsonrpc').default;
+console.log(definitions, jsonrpc)
+async function main() {
   // extract all types from definitions - fast and dirty approach, flatted on 'types'
-  const types = Object.values(definitions).reduce((res, { types }): object => ({ ...res, ...types }), {});
+  const types = Object.values(definitions).reduce((res, { types }) => ({ ...res, ...types }), {});
   const provider = new WsProvider('wss://crab.darwinia.network');
 
   const api = await ApiPromise.create({
@@ -43,6 +38,7 @@ async function main(): Promise<void> {
 
   // get a query
   const accountInfo = await api.query.system.account('5D9gmgGeNAmG3hTgE89ksEkRRxdxk5CF5BDoLsgLjeaW94Et');
+
 
 ```
 
