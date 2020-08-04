@@ -2,11 +2,13 @@
 /* eslint-disable */
 
 import { Codec } from '@polkadot/types/types';
+import { Vec } from '@polkadot/types/codec';
 import { Bytes, u32, u64, u8 } from '@polkadot/types/primitive';
-import { EthNetworkType, KtonBalance, Power, RingBalance } from '@darwinia/types/interfaces/darwiniaInject';
-import { Balance, BalanceOf, BlockNumber, LockIdentifier, ModuleId, Moment, Percent, Permill, RuntimeDbWeight, Weight } from '@polkadot/types/interfaces/runtime';
+import { EthereumNetworkType, KtonBalance, Power, RingBalance } from '@darwinia/types/interfaces/darwiniaInject';
+import { Balance, BalanceOf, BlockNumber, LockIdentifier, ModuleId, Moment, Perbill, Percent, Permill, RuntimeDbWeight, Weight } from '@polkadot/types/interfaces/runtime';
 import { SessionIndex } from '@polkadot/types/interfaces/session';
 import { EraIndex } from '@polkadot/types/interfaces/staking';
+import { WeightToFeeCoefficient } from '@polkadot/types/interfaces/support';
 
 declare module '@polkadot/metadata/Decorated/consts/types' {
   export interface Constants {
@@ -51,7 +53,7 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
       termDuration: AugmentedConst<BlockNumber>;
       votingBond: AugmentedConst<BalanceOf>;
     };
-    ethBacking: {
+    ethereumBacking: {
       [index: string]: AugmentedConst<object & Codec>;
       /**
        * The treasury's module id, used for deriving its sovereign account ID.
@@ -59,13 +61,13 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
       moduleId: AugmentedConst<ModuleId>;
       subKeyPrefix: AugmentedConst<u8>;
     };
-    ethOffchain: {
+    ethereumLinearRelay: {
+      [index: string]: AugmentedConst<object & Codec>;
+      ethereumNetwork: AugmentedConst<EthereumNetworkType>;
+    };
+    ethereumOffchain: {
       [index: string]: AugmentedConst<object & Codec>;
       fetchInterval: AugmentedConst<BlockNumber>;
-    };
-    ethRelay: {
-      [index: string]: AugmentedConst<object & Codec>;
-      ethNetwork: AugmentedConst<EthNetworkType>;
     };
     finalityTracker: {
       [index: string]: AugmentedConst<object & Codec>;
@@ -78,76 +80,12 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
        **/
       windowSize: AugmentedConst<BlockNumber>;
     };
-    identity: {
-      [index: string]: AugmentedConst<object & Codec>;
-      /**
-       * The amount held on deposit for a registered identity.
-       **/
-      basicDeposit: AugmentedConst<BalanceOf>;
-      /**
-       * The amount held on deposit per additional field for a registered identity.
-       **/
-      fieldDeposit: AugmentedConst<BalanceOf>;
-      /**
-       * Maximum number of additional fields that may be stored in an ID. Needed to bound the I/O
-       * required to access an identity, but can be pretty high.
-       **/
-      maxAdditionalFields: AugmentedConst<u32>;
-      /**
-       * Maxmimum number of registrars allowed in the system. Needed to bound the complexity
-       * of, e.g., updating judgements.
-       **/
-      maxRegistrars: AugmentedConst<u32>;
-      /**
-       * The maximum number of sub-accounts allowed per identified account.
-       **/
-      maxSubAccounts: AugmentedConst<u32>;
-      /**
-       * The amount held on deposit for a registered subaccount. This should account for the fact
-       * that one storage item's value will increase by the size of an account ID, and there will be
-       * another trie item whose value is the size of an account ID plus 32 bytes.
-       **/
-      subAccountDeposit: AugmentedConst<BalanceOf>;
-    };
     kton: {
       [index: string]: AugmentedConst<object & Codec>;
       /**
        * The minimum amount required to keep an account open.
        **/
       existentialDeposit: AugmentedConst<Balance>;
-    };
-    society: {
-      [index: string]: AugmentedConst<object & Codec>;
-      /**
-       * The minimum amount of a deposit required for a bid to be made.
-       **/
-      candidateDeposit: AugmentedConst<BalanceOf>;
-      /**
-       * The number of blocks between membership challenges.
-       **/
-      challengePeriod: AugmentedConst<BlockNumber>;
-      /**
-       * The number of times a member may vote the wrong way (or not at all, when they are a skeptic)
-       * before they become suspended.
-       **/
-      maxStrikes: AugmentedConst<u32>;
-      /**
-       * The societies's module id
-       **/
-      moduleId: AugmentedConst<ModuleId>;
-      /**
-       * The amount of incentive paid within each period. Doesn't include VoterTip.
-       **/
-      periodSpend: AugmentedConst<BalanceOf>;
-      /**
-       * The number of blocks between candidate/membership rotation periods.
-       **/
-      rotationPeriod: AugmentedConst<BlockNumber>;
-      /**
-       * The amount of the unpaid reward that gets deducted in the case that either a skeptic
-       * doesn't vote or someone votes in the wrong way.
-       **/
-      wrongSideDeduction: AugmentedConst<BalanceOf>;
     };
     staking: {
       [index: string]: AugmentedConst<object & Codec>;
@@ -161,9 +99,44 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
       bondingDurationInEra: AugmentedConst<EraIndex>;
       cap: AugmentedConst<RingBalance>;
       /**
+       * The number of blocks before the end of the era from which election submissions are allowed.
+       * 
+       * Setting this to zero will disable the offchain compute and only on-chain seq-phragmen will
+       * be used.
+       * 
+       * This is bounded by being within the last session. Hence, setting it to a value more than the
+       * length of a session will be pointless.
+       **/
+      electionLookahead: AugmentedConst<BlockNumber>;
+      /**
+       * Maximum number of balancing iterations to run in the offchain submission.
+       * 
+       * If set to 0, balance_solution will not be executed at all.
+       **/
+      maxIterations: AugmentedConst<u32>;
+      /**
+       * The maximum number of nominators rewarded for each validator.
+       * 
+       * For each validator only the `$MaxNominatorRewardedPerValidator` biggest stakers can claim
+       * their reward. This used to limit the i/o cost for the nominator payout.
+       **/
+      maxNominatorRewardedPerValidator: AugmentedConst<u32>;
+      /**
+       * The threshold of improvement that should be provided for a new solution to be accepted.
+       **/
+      minSolutionScoreBump: AugmentedConst<Perbill>;
+      /**
        * Number of sessions per era.
        **/
       sessionsPerEra: AugmentedConst<SessionIndex>;
+      /**
+       * Number of eras that slashes are deferred by, after computation.
+       * 
+       * This should be less than the bonding duration.
+       * Set to 0 if slashes should be applied immediately, without opportunity for
+       * intervention.
+       **/
+      slashDeferDuration: AugmentedConst<EraIndex>;
       totalPower: AugmentedConst<Power>;
     };
     system: {
@@ -209,6 +182,10 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
        * The fee to be paid for making a transaction; the per-byte portion.
        **/
       transactionByteFee: AugmentedConst<BalanceOf>;
+      /**
+       * The polynomial that is applied in order to derive fee from weight.
+       **/
+      weightToFee: AugmentedConst<Vec<WeightToFeeCoefficient>>;
     };
     treasury: {
       [index: string]: AugmentedConst<object & Codec>;

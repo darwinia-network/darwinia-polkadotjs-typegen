@@ -87,13 +87,18 @@ export default {
       ktonBalance: 'Compact<Balance>',
       power: 'Power'
     },
+    ElectionResultT: {
+      "electedStashes": "Vec<AccountId>",
+      "exposures": "Vec<(AccountId, ExposureT)>",
+      "compute": "ElectionCompute"
+    },
     RKT: {
       r: 'Balance',
       k: 'Balance'
     },
     EthTransactionIndex: '(H256, u64)',
     EthHeaderBrief: {
-      total_difficulty: 'U256',
+      totalDifficulty: 'U256',
       parentHash: 'H256',
       number: 'EthBlockNumber',
       relayer: 'AccountId'
@@ -119,11 +124,10 @@ export default {
     EthAddress: 'H160',
     Bloom: '[u8; 256; Bloom]',
     H128: '[u8; 16; H128]',
-    DoubleNodeWithMerkleProof: {
+    EthashProof: {
       dagNodes: '(H512, H512)',
       proof: 'Vec<H128>'
     },
-    ElectionResultT: {},
     LogEntry: {},
     TransactionOutcome: {},
     Receipt: {
@@ -132,7 +136,7 @@ export default {
       logs: 'Vec<LogEntry>',
       outcome: 'TransactionOutcome'
     },
-    EthNetworkType: {
+    EthereumNetworkType: {
       _enum: {
         Mainnet: null,
         Ropsten: null
@@ -180,11 +184,32 @@ export default {
       slashed: 'RKT',
       paidOut: 'RKT'
     },
+    UnappliedSlash: {
+      "validator": "AccountId",
+      "own": "RKT",
+      "others": "Vec<(AccountId, RKT)>",
+      "reporters": "Vec<AccountId>",
+      "payout": "RKT"
+    },
     AccountInfo: {
       nonce: 'Index', 
       refcount: 'RefCount',
       data: 'AccountData'
-    }
+    },
+    Proposal: {
+      "proposer": "AccountId",
+      "beneficiary": "AccountId",
+      "ringValue": "Balance",
+      "ktonValue": "Balance",
+      "ringBond": "Balance",
+      "ktonBond": "Balance"
+    },
+    Round: "u64",
+    TcBlockNumber: "Vec<u8>",
+    GameId: "TcBlockNumber",
+    TcHeaderHash: "Vec<u8>",
+	  MMRHash: "Vec<u8>",
+    RawHeaderThing: "Vec<u8>",
   },
   rpc: {
 

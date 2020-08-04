@@ -6,9 +6,8 @@ import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/co
 import { Bytes, Text, U256, u32, u64, u8 } from '@polkadot/types/primitive';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, Index, LockIdentifier } from '@polkadot/types/interfaces/runtime';
-import { EraIndex } from '@polkadot/types/interfaces/staking';
 import { RefCount } from '@polkadot/types/interfaces/system';
-
+import { ElectionCompute, EraIndex }  from '@polkadot/types/interfaces/staking';
 /** @name AccountData */
 export interface AccountData extends Struct {
   readonly free: Balance;
@@ -62,23 +61,33 @@ export interface Common extends Struct {
 /** @name DepositId */
 export interface DepositId extends U256 {}
 
-/** @name DoubleNodeWithMerkleProof */
-export interface DoubleNodeWithMerkleProof extends Struct {
-  readonly dagNodes: ITuple<[H512, H512]>;
-  readonly proof: Vec<H128>;
-}
-
 /** @name EcdsaSignature */
 export interface EcdsaSignature extends U8aFixed {}
 
 /** @name ElectionResultT */
-export interface ElectionResultT extends Struct {}
+export interface ElectionResultT extends Struct {
+  readonly electedStashes: Vec<AccountId>;
+  readonly exposures: Vec<ITuple<[AccountId, ExposureT]>>;
+  readonly compute: ElectionCompute;
+}
 
 /** @name EthAddress */
 export interface EthAddress extends H160 {}
 
+/** @name EthashProof */
+export interface EthashProof extends Struct {
+  readonly dagNodes: ITuple<[H512, H512]>;
+  readonly proof: Vec<H128>;
+}
+
 /** @name EthBlockNumber */
 export interface EthBlockNumber extends u64 {}
+
+/** @name EthereumNetworkType */
+export interface EthereumNetworkType extends Enum {
+  readonly isMainnet: boolean;
+  readonly isRopsten: boolean;
+}
 
 /** @name EthHeader */
 export interface EthHeader extends Struct {
@@ -101,16 +110,10 @@ export interface EthHeader extends Struct {
 
 /** @name EthHeaderBrief */
 export interface EthHeaderBrief extends Struct {
-  readonly total_difficulty: U256;
+  readonly totalDifficulty: U256;
   readonly parentHash: H256;
   readonly number: EthBlockNumber;
   readonly relayer: AccountId;
-}
-
-/** @name EthNetworkType */
-export interface EthNetworkType extends Enum {
-  readonly isMainnet: boolean;
-  readonly isRopsten: boolean;
 }
 
 /** @name EthReceiptProof */
@@ -134,6 +137,9 @@ export interface ExposureT extends Struct {
   readonly totalPower: Power;
   readonly others: Vec<IndividualExposure>;
 }
+
+/** @name GameId */
+export interface GameId extends TcBlockNumber {}
 
 /** @name H128 */
 export interface H128 extends U8aFixed {}
@@ -166,6 +172,9 @@ export interface MerkleMountainRangeRootLog extends Struct {
   readonly mmrRoot: Hash;
 }
 
+/** @name MMRHash */
+export interface MMRHash extends Bytes {}
+
 /** @name OtherAddress */
 export interface OtherAddress extends Enum {
   readonly isEth: boolean;
@@ -184,6 +193,19 @@ export interface OtherSignature extends Enum {
 
 /** @name Power */
 export interface Power extends u32 {}
+
+/** @name Proposal */
+export interface Proposal extends Struct {
+  readonly proposer: AccountId;
+  readonly beneficiary: AccountId;
+  readonly ringValue: Balance;
+  readonly ktonValue: Balance;
+  readonly ringBond: Balance;
+  readonly ktonBond: Balance;
+}
+
+/** @name RawHeaderThing */
+export interface RawHeaderThing extends Bytes {}
 
 /** @name Reasons */
 export interface Reasons extends Enum {
@@ -227,6 +249,9 @@ export interface RKT extends Struct {
   readonly k: Balance;
 }
 
+/** @name Round */
+export interface Round extends u64 {}
+
 /** @name SpanRecord */
 export interface SpanRecord extends Struct {
   readonly slashed: RKT;
@@ -264,6 +289,12 @@ export interface StakingLock extends Struct {
   readonly unbondings: Vec<Unbonding>;
 }
 
+/** @name TcBlockNumber */
+export interface TcBlockNumber extends Bytes {}
+
+/** @name TcHeaderHash */
+export interface TcHeaderHash extends Bytes {}
+
 /** @name TimeDepositItem */
 export interface TimeDepositItem extends Struct {
   readonly value: Compact<Balance>;
@@ -279,6 +310,15 @@ export interface TronAddress extends EthereumAddress {}
 
 /** @name TsInMs */
 export interface TsInMs extends u64 {}
+
+/** @name UnappliedSlash */
+export interface UnappliedSlash extends Struct {
+  readonly validator: AccountId;
+  readonly own: RKT;
+  readonly others: Vec<ITuple<[AccountId, RKT]>>;
+  readonly reporters: Vec<AccountId>;
+  readonly payout: RKT;
+}
 
 /** @name Unbonding */
 export interface Unbonding extends Struct {

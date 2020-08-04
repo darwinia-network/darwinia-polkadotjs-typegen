@@ -1,6 +1,6 @@
 {
   "name": "@darwinia/typegen",
-  "version": "0.0.7",
+  "version": "0.0.9",
   "description": "A sample using @polkadot/typegen to generate type definitions",
   "repository": "https://github.com/WoeOm/darwinia-polkadotjs-typegen",
   "author": "WoeOm",
@@ -16,10 +16,10 @@
 
   },
   "dependencies": {
-    "@polkadot/api": "1.15.1"
+    "@polkadot/api": "1.27.1"
   },
   "devDependencies": {
-    "@polkadot/typegen": "1.15.1",
+    "@polkadot/typegen": "1.27.1",
     "ts-node": "^8.9.1",
     "typescript": "^3.8.3"
   }
