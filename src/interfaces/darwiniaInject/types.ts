@@ -44,6 +44,12 @@ export interface BalanceLock extends Struct {
 /** @name Bloom */
 export interface Bloom extends U8aFixed {}
 
+/** @name BondedTcHeader */
+export interface BondedTcHeader extends Struct {
+  readonly headerBrief: TcHeaderBrief;
+  readonly bond: Balance;
+}
+
 /** @name ChainProperties */
 export interface ChainProperties extends Struct {
   readonly ss58Format: Option<u8>;
@@ -89,6 +95,13 @@ export interface EthereumNetworkType extends Enum {
   readonly isRopsten: boolean;
 }
 
+/** @name EthereumReceiptProof */
+export interface EthereumReceiptProof extends Struct {
+  readonly index: u64;
+  readonly proof: Bytes;
+  readonly headerHash: H256;
+}
+
 /** @name EthHeader */
 export interface EthHeader extends Struct {
   readonly parentHash: H256;
@@ -114,6 +127,14 @@ export interface EthHeaderBrief extends Struct {
   readonly parentHash: H256;
   readonly number: EthBlockNumber;
   readonly relayer: AccountId;
+}
+
+/** @name EthHeaderThing */
+export interface EthHeaderThing extends Struct {
+  readonly ethHeader: EthHeader;
+  readonly ethashProof: Vec<EthashProof>;
+  readonly mmrRoot: MMRHash;
+  readonly mmrProof: Vec<MMRHash>;
 }
 
 /** @name EthReceiptProof */
@@ -175,6 +196,9 @@ export interface MerkleMountainRangeRootLog extends Struct {
 /** @name MMRHash */
 export interface MMRHash extends Bytes {}
 
+/** @name MMRProof */
+export interface MMRProof extends Vec<H256> {}
+
 /** @name OtherAddress */
 export interface OtherAddress extends Enum {
   readonly isEth: boolean;
@@ -193,16 +217,6 @@ export interface OtherSignature extends Enum {
 
 /** @name Power */
 export interface Power extends u32 {}
-
-/** @name Proposal */
-export interface Proposal extends Struct {
-  readonly proposer: AccountId;
-  readonly beneficiary: AccountId;
-  readonly ringValue: Balance;
-  readonly ktonValue: Balance;
-  readonly ringBond: Balance;
-  readonly ktonBond: Balance;
-}
 
 /** @name RawHeaderThing */
 export interface RawHeaderThing extends Bytes {}
@@ -225,11 +239,15 @@ export interface Receipt extends Struct {
 /** @name RedeemFor */
 export interface RedeemFor extends Enum {
   readonly isRing: boolean;
-  readonly asRing: EthReceiptProof;
   readonly isKton: boolean;
-  readonly asKton: EthReceiptProof;
   readonly isDeposit: boolean;
-  readonly asDeposit: EthReceiptProof;
+}
+
+/** @name RelayProposal */
+export interface RelayProposal extends Struct {
+  readonly relayer: AccountId;
+  readonly bondedChain: Vec<BondedTcHeader>;
+  readonly extendFromHeaderHash: Option<TcHeaderHash>;
 }
 
 /** @name RewardDestination */
@@ -292,8 +310,20 @@ export interface StakingLock extends Struct {
 /** @name TcBlockNumber */
 export interface TcBlockNumber extends Bytes {}
 
+/** @name TcHeaderBrief */
+export interface TcHeaderBrief extends Struct {
+  readonly number: TcBlockNumber;
+  readonly hash: TcHeaderHash;
+  readonly parentHash: TcHeaderHash;
+  readonly mmr: TcHeaderMMR;
+  readonly others: Bytes;
+}
+
 /** @name TcHeaderHash */
 export interface TcHeaderHash extends Bytes {}
+
+/** @name TcHeaderMMR */
+export interface TcHeaderMMR extends Bytes {}
 
 /** @name TimeDepositItem */
 export interface TimeDepositItem extends Struct {
@@ -304,6 +334,16 @@ export interface TimeDepositItem extends Struct {
 
 /** @name TransactionOutcome */
 export interface TransactionOutcome extends Struct {}
+
+/** @name TreasuryProposal */
+export interface TreasuryProposal extends Struct {
+  readonly proposer: AccountId;
+  readonly beneficiary: AccountId;
+  readonly ringValue: Balance;
+  readonly ktonValue: Balance;
+  readonly ringBond: Balance;
+  readonly ktonBond: Balance;
+}
 
 /** @name TronAddress */
 export interface TronAddress extends EthereumAddress {}

@@ -104,6 +104,12 @@ export default {
       relayer: 'AccountId'
     },
     EthBlockNumber: 'u64',
+    EthHeaderThing: {
+      "ethHeader": "EthHeader",
+      "ethashProof": "Vec<EthashProof>",
+      "mmrRoot": "MMRHash",
+      "mmrProof": "Vec<MMRHash>"
+    },
     EthHeader: {
       parentHash: 'H256',
       timestamp: 'u64',
@@ -144,9 +150,9 @@ export default {
     },
     RedeemFor: {
       _enum: {
-        Ring: 'EthReceiptProof',
-        Kton: 'EthReceiptProof',
-        Deposit: 'EthReceiptProof'
+        Ring: null,
+        Kton: null,
+        Deposit: null
       }
     },
     EthReceiptProof: {
@@ -154,6 +160,12 @@ export default {
       proof: 'Bytes',
       headerHash: 'H256'
     },
+    EthereumReceiptProof: {
+      index: 'u64',
+      proof: 'Bytes',
+      headerHash: 'H256'
+    },
+    MMRProof: "Vec<H256>",
     OtherSignature: {
       _enum: {
         Eth: 'EcdsaSignature',
@@ -196,7 +208,7 @@ export default {
       refcount: 'RefCount',
       data: 'AccountData'
     },
-    Proposal: {
+    TreasuryProposal: {
       "proposer": "AccountId",
       "beneficiary": "AccountId",
       "ringValue": "Balance",
@@ -206,10 +218,27 @@ export default {
     },
     Round: "u64",
     TcBlockNumber: "Vec<u8>",
-    GameId: "TcBlockNumber",
     TcHeaderHash: "Vec<u8>",
+    TcHeaderMMR: "Vec<u8>",
+    GameId: "TcBlockNumber",
 	  MMRHash: "Vec<u8>",
     RawHeaderThing: "Vec<u8>",
+    TcHeaderBrief: {
+      "number": "TcBlockNumber",
+      "hash": "TcHeaderHash",
+      "parentHash": "TcHeaderHash",
+      "mmr": "TcHeaderMMR",
+      "others": "Vec<u8>"
+    },
+    BondedTcHeader: {
+      "headerBrief": "TcHeaderBrief",
+      "bond": "Balance"
+    },
+    RelayProposal: {
+      "relayer": "AccountId",
+      "bondedChain": "Vec<BondedTcHeader>",
+      "extendFromHeaderHash": "Option<TcHeaderHash>"
+    },
   },
   rpc: {
 
