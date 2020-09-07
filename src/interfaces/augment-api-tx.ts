@@ -4,8 +4,9 @@
 import { AnyNumber, ITuple } from '@polkadot/types/types';
 import { Compact, Option, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Data, bool, u16, u32, u64, u8 } from '@polkadot/types/primitive';
-import { EthAddress, EthBlockNumber, EthHeader, EthHeaderThing, EthReceiptProof, EthereumReceiptProof, KtonBalance, MMRProof, OtherAddress, OtherSignature, RedeemFor, RingBalance, StakingBalanceT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { CallHashOf, EthereumBlockNumber, EthereumHeader, EthereumHeaderThingWithProof, EthereumReceiptProof, EthereumReceiptProofThing, KtonBalance, MMRProof, OtherAddress, OtherSignature, RedeemFor, RingBalance, StakingBalanceT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
 import { BabeEquivocationProof } from '@polkadot/types/interfaces/babe';
+import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { MemberCount, ProposalIndex } from '@polkadot/types/interfaces/collective';
 import { Proposal } from '@polkadot/types/interfaces/democracy';
 import { DefunctVoter, Renouncing } from '@polkadot/types/interfaces/elections';
@@ -494,7 +495,7 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(1)`
        * # </weight>
        **/
-      redeem: AugmentedSubmittable<(act: RedeemFor | 'Ring'|'Kton'|'Deposit' | number | Uint8Array, proof: EthereumReceiptProof | { index?: any; proof?: any; headerHash?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      redeem: AugmentedSubmittable<(act: RedeemFor | 'RedeemFor'|'Deposit' | number | Uint8Array, proof: EthereumReceiptProofThing) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set a new deposit redeem address.
        * 
@@ -506,7 +507,7 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(1)`.
        * # </weight>
        **/
-      setDepositRedeemAddress: AugmentedSubmittable<(updated: EthAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      setDepositRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set a new kton redeem address.
        * 
@@ -518,7 +519,7 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(1)`.
        * # </weight>
        **/
-      setKtonRedeemAddress: AugmentedSubmittable<(updated: EthAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      setKtonRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set a new ring redeem address.
        * 
@@ -530,11 +531,11 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(1)`.
        * # </weight>
        **/
-      setRingRedeemAddress: AugmentedSubmittable<(updated: EthAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      setRingRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
     };
     ethereumRelay: {
       [index: string]: SubmittableExtrinsicFunction<ApiType>;
-      approvePendingHeader: AugmentedSubmittable<(pending: EthBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      approvePendingHeader: AugmentedSubmittable<(pending: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Check and verify the receipt
        * 
@@ -565,20 +566,20 @@ declare module '@polkadot/api/types/submittable' {
        * - `set_receipt_verify_fee` can be used to set the verify fee for each receipt check.
        * # </weight>
        **/
-      checkReceipt: AugmentedSubmittable<(proofRecord: EthReceiptProof | { index?: any; proof?: any; headerHash?: any } | string | Uint8Array, ethHeader: EthHeader | { parentHash?: any; timestamp?: any; number?: any; author?: any; transactionsRoot?: any; unclesHash?: any; extraData?: any; stateRoot?: any; receiptsRoot?: any; logBloom?: any; gasUsed?: any; gasLimit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, mmrProof: MMRProof) => SubmittableExtrinsic<ApiType>>;
-      rejectPendingHeader: AugmentedSubmittable<(pending: EthBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      checkReceipt: AugmentedSubmittable<(proofRecord: EthereumReceiptProof | { index?: any; proof?: any; headerHash?: any } | string | Uint8Array, ethHeader: EthereumHeader | { parent_hash?: any; timestamp?: any; number?: any; author?: any; transactions_root?: any; uncles_hash?: any; extra_data?: any; state_root?: any; receipts_root?: any; log_bloom?: any; gas_used?: any; gas_limit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, mmrProof: MMRProof) => SubmittableExtrinsic<ApiType>>;
+      rejectPendingHeader: AugmentedSubmittable<(pending: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Remove the specific malicous block
        **/
-      removeConfirmedBlock: AugmentedSubmittable<(number: EthBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      removeConfirmedBlock: AugmentedSubmittable<(number: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Remove the blocks in particular month (month is calculated as cycle)
        **/
-      removeConfirmedBlocksInMonth: AugmentedSubmittable<(cycle: EthBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      removeConfirmedBlocksInMonth: AugmentedSubmittable<(cycle: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Setup the parameters to delete the confirmed blocks after month * blocks_in_month
        **/
-      setConfirmedBlocksCleanParameters: AugmentedSubmittable<(month: EthBlockNumber | AnyNumber | Uint8Array, blocksInMonth: EthBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      setConfirmedBlocksCleanParameters: AugmentedSubmittable<(month: EthereumBlockNumber | AnyNumber | Uint8Array, blocksInMonth: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set verify receipt fee
        * 
@@ -587,8 +588,8 @@ declare module '@polkadot/api/types/submittable' {
        * - One storage write
        * # </weight>
        **/
-      setReceiptVerifyFee: AugmentedSubmittable<(updated: Compact<Balance> | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
-      submitProposal: AugmentedSubmittable<(ethHeaderThingChain: Vec<EthHeaderThing> | (EthHeaderThing | { ethHeader?: any; ethashProof?: any; mmrRoot?: any; mmrProof?: any } | string | Uint8Array)[]) => SubmittableExtrinsic<ApiType>>;
+      setReceiptVerifyFee: AugmentedSubmittable<(updated: Compact<RingBalance> | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      submitProposal: AugmentedSubmittable<(proposal: Vec<EthereumHeaderThingWithProof> | (EthereumHeaderThingWithProof | { header?: any; ethashProof?: any; mmrRoot?: any; mmrProof?: any } | string | Uint8Array)[]) => SubmittableExtrinsic<ApiType>>;
     };
     finalityTracker: {
       [index: string]: SubmittableExtrinsicFunction<ApiType>;
@@ -1252,12 +1253,34 @@ declare module '@polkadot/api/types/submittable' {
        * - `proxy_type`: The permissions allowed for this proxy account.
        * 
        * # <weight>
-       * P is the number of proxies the user has
-       * - Base weight: 17.48 + .176 * P µs
-       * - DB weight: 1 storage read and write.
+       * Weight is a function of the number of proxies the user has (P).
        * # </weight>
        **/
-      addProxy: AugmentedSubmittable<(proxy: AccountId | string | Uint8Array, proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      addProxy: AugmentedSubmittable<(delegate: AccountId | string | Uint8Array, proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array, delay: BlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      /**
+       * Publish the hash of a proxy-call that will be made in the future.
+       * 
+       * This must be called some number of blocks before the corresponding `proxy` is attempted
+       * if the delay associated with the proxy relationship is greater than zero.
+       * 
+       * No more than `MaxPending` announcements may be made at any one time.
+       * 
+       * This will take a deposit of `AnnouncementDepositFactor` as well as
+       * `AnnouncementDepositBase` if there are no other pending announcements.
+       * 
+       * The dispatch origin for this call must be _Signed_ and a proxy of `real`.
+       * 
+       * Parameters:
+       * - `real`: The account that the proxy will make a call on behalf of.
+       * - `call_hash`: The hash of the call to be made by the `real` account.
+       * 
+       * # <weight>
+       * Weight is a function of:
+       * - A: the number of announcements made.
+       * - P: the number of proxies the user has.
+       * # </weight>
+       **/
+      announce: AugmentedSubmittable<(real: AccountId | string | Uint8Array, callHash: CallHashOf | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Spawn a fresh new account that is guaranteed to be otherwise inaccessible, and
        * initialize it with a proxy of `proxy_type` for `origin` sender.
@@ -1270,6 +1293,8 @@ declare module '@polkadot/api/types/submittable' {
        * - `index`: A disambiguation index, in case this is called multiple times in the same
        * transaction (e.g. with `utility::batch`). Unless you're using `batch` you probably just
        * want to use `0`.
+       * - `delay`: The announcement period required of the initial proxy. Will generally be
+       * zero.
        * 
        * Fails with `Duplicate` if this has already been called in this transaction, from the
        * same sender, with the same parameters.
@@ -1277,12 +1302,11 @@ declare module '@polkadot/api/types/submittable' {
        * Fails if there are insufficient funds to pay for deposit.
        * 
        * # <weight>
-       * P is the number of proxies the user has
-       * - Base weight: 36.48 + .039 * P µs
-       * - DB weight: 1 storage read and write.
+       * Weight is a function of the number of proxies the user has (P).
        * # </weight>
+       * TODO: Might be over counting 1 read
        **/
-      anonymous: AugmentedSubmittable<(proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array, index: u16 | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      anonymous: AugmentedSubmittable<(proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array, delay: BlockNumber | AnyNumber | Uint8Array, index: u16 | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Removes a previously spawned anonymous proxy.
        * 
@@ -1302,15 +1326,15 @@ declare module '@polkadot/api/types/submittable' {
        * account whose `anonymous` call has corresponding parameters.
        * 
        * # <weight>
-       * P is the number of proxies the user has
-       * - Base weight: 15.65 + .137 * P µs
-       * - DB weight: 1 storage read and write.
+       * Weight is a function of the number of proxies the user has (P).
        * # </weight>
        **/
       killAnonymous: AugmentedSubmittable<(spawner: AccountId | string | Uint8Array, proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array, index: u16 | AnyNumber | Uint8Array, height: Compact<BlockNumber> | AnyNumber | Uint8Array, extIndex: Compact<u32> | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Dispatch the given `call` from an account that the sender is authorised for through
        * `add_proxy`.
+       * 
+       * Removes any corresponding announcement(s).
        * 
        * The dispatch origin for this call must be _Signed_.
        * 
@@ -1320,13 +1344,68 @@ declare module '@polkadot/api/types/submittable' {
        * - `call`: The call to be made by the `real` account.
        * 
        * # <weight>
-       * P is the number of proxies the user has
-       * - Base weight: 19.87 + .141 * P µs
-       * - DB weight: 1 storage read.
-       * - Plus the weight of the `call`
+       * Weight is a function of the number of proxies the user has (P).
        * # </weight>
        **/
       proxy: AugmentedSubmittable<(real: AccountId | string | Uint8Array, forceProxyType: Option<ProxyType> | null | object | string | Uint8Array, call: Call | { callIndex?: any; args?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      /**
+       * Dispatch the given `call` from an account that the sender is authorised for through
+       * `add_proxy`.
+       * 
+       * Removes any corresponding announcement(s).
+       * 
+       * The dispatch origin for this call must be _Signed_.
+       * 
+       * Parameters:
+       * - `real`: The account that the proxy will make a call on behalf of.
+       * - `force_proxy_type`: Specify the exact proxy type to be used and checked for this call.
+       * - `call`: The call to be made by the `real` account.
+       * 
+       * # <weight>
+       * Weight is a function of:
+       * - A: the number of announcements made.
+       * - P: the number of proxies the user has.
+       * # </weight>
+       **/
+      proxyAnnounced: AugmentedSubmittable<(delegate: AccountId | string | Uint8Array, real: AccountId | string | Uint8Array, forceProxyType: Option<ProxyType> | null | object | string | Uint8Array, call: Call | { callIndex?: any; args?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      /**
+       * Remove the given announcement of a delegate.
+       * 
+       * May be called by a target (proxied) account to remove a call that one of their delegates
+       * (`delegate`) has announced they want to execute. The deposit is returned.
+       * 
+       * The dispatch origin for this call must be _Signed_.
+       * 
+       * Parameters:
+       * - `delegate`: The account that previously announced the call.
+       * - `call_hash`: The hash of the call to be made.
+       * 
+       * # <weight>
+       * Weight is a function of:
+       * - A: the number of announcements made.
+       * - P: the number of proxies the user has.
+       * # </weight>
+       **/
+      rejectAnnouncement: AugmentedSubmittable<(delegate: AccountId | string | Uint8Array, callHash: CallHashOf | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      /**
+       * Remove a given announcement.
+       * 
+       * May be called by a proxy account to remove a call they previously announced and return
+       * the deposit.
+       * 
+       * The dispatch origin for this call must be _Signed_.
+       * 
+       * Parameters:
+       * - `real`: The account that the proxy will make a call on behalf of.
+       * - `call_hash`: The hash of the call to be made by the `real` account.
+       * 
+       * # <weight>
+       * Weight is a function of:
+       * - A: the number of announcements made.
+       * - P: the number of proxies the user has.
+       * # </weight>
+       **/
+      removeAnnouncement: AugmentedSubmittable<(real: AccountId | string | Uint8Array, callHash: CallHashOf | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Unregister all proxy accounts for the sender.
        * 
@@ -1336,9 +1415,7 @@ declare module '@polkadot/api/types/submittable' {
        * the unreserved fees will be inaccessible. **All access to this account will be lost.**
        * 
        * # <weight>
-       * P is the number of proxies the user has
-       * - Base weight: 13.73 + .129 * P µs
-       * - DB weight: 1 storage read and write.
+       * Weight is a function of the number of proxies the user has (P).
        * # </weight>
        **/
       removeProxies: AugmentedSubmittable<() => SubmittableExtrinsic<ApiType>>;
@@ -1352,12 +1429,10 @@ declare module '@polkadot/api/types/submittable' {
        * - `proxy_type`: The permissions currently enabled for the removed proxy account.
        * 
        * # <weight>
-       * P is the number of proxies the user has
-       * - Base weight: 14.37 + .164 * P µs
-       * - DB weight: 1 storage read and write.
+       * Weight is a function of the number of proxies the user has (P).
        * # </weight>
        **/
-      removeProxy: AugmentedSubmittable<(proxy: AccountId | string | Uint8Array, proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      removeProxy: AugmentedSubmittable<(delegate: AccountId | string | Uint8Array, proxyType: ProxyType | 'Any'|'NonTransfer'|'Governance'|'Staking' | number | Uint8Array, delay: BlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
     };
     recovery: {
       [index: string]: SubmittableExtrinsicFunction<ApiType>;
@@ -2841,9 +2916,6 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(T)` where `T` complexity of `on_timestamp_set`
        * - 1 storage read and 1 storage mutation (codec `O(1)`). (because of `DidUpdate::take` in `on_finalize`)
        * - 1 event handler `on_timestamp_set` `O(T)`.
-       * - Benchmark: 7.678 (min squares analysis)
-       * - NOTE: This benchmark was done for a runtime with insignificant `on_timestamp_set` handlers.
-       * New benchmarking is needed when adding new handlers.
        * # </weight>
        **/
       set: AugmentedSubmittable<(now: Compact<Moment> | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
@@ -3021,11 +3093,6 @@ declare module '@polkadot/api/types/submittable' {
        * NOTE: Prior to version *12, this was called `as_limited_sub`.
        * 
        * The dispatch origin for this call must be _Signed_.
-       * 
-       * # <weight>
-       * - Base weight: 2.861 µs
-       * - Plus the weight of the `call`
-       * # </weight>
        **/
       asDerivative: AugmentedSubmittable<(index: u16 | AnyNumber | Uint8Array, call: Call | { callIndex?: any; args?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**

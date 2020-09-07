@@ -103,6 +103,13 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
        **/
       subAccountDeposit: AugmentedConst<BalanceOf>;
     };
+    indices: {
+      [index: string]: AugmentedConst<object & Codec>;
+      /**
+       * The deposit needed for reserving an index.
+       **/
+      deposit: AugmentedConst<BalanceOf>;
+    };
     kton: {
       [index: string]: AugmentedConst<object & Codec>;
       /**
@@ -112,6 +119,18 @@ declare module '@polkadot/metadata/Decorated/consts/types' {
     };
     proxy: {
       [index: string]: AugmentedConst<object & Codec>;
+      /**
+       * `AnnouncementDepositBase` metadata shadow.
+       **/
+      announcementDepositBase: AugmentedConst<BalanceOf>;
+      /**
+       * `AnnouncementDepositFactor` metadata shadow.
+       **/
+      announcementDepositFactor: AugmentedConst<BalanceOf>;
+      /**
+       * `MaxPending` metadata shadow.
+       **/
+      maxPending: AugmentedConst<u32>;
       /**
        * The maximum amount of proxies allowed for a single account.
        **/

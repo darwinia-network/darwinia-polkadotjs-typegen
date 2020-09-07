@@ -3,6 +3,7 @@
 export default {
   types: {
     Address: 'AccountId',
+    LookupSource: "AccountId",
     BalanceInfo: {},
     BalanceLock: {
       id: 'LockIdentifier',
@@ -96,38 +97,42 @@ export default {
       r: 'Balance',
       k: 'Balance'
     },
-    EthTransactionIndex: '(H256, u64)',
-    EthHeaderBrief: {
+    EthereumTransactionIndex: '(H256, u64)',
+    EthereumHeaderBrief: {
       totalDifficulty: 'U256',
       parentHash: 'H256',
-      number: 'EthBlockNumber',
-      relayer: 'AccountId'
+      number: 'EthereumBlockNumber',
+      relayer: 'EthereumAddress'
     },
-    EthBlockNumber: 'u64',
-    EthHeaderThing: {
-      "ethHeader": "EthHeader",
+    EthereumBlockNumber: 'u64',
+    EthereumHeaderThingWithProof: {
+      "header": "EthereumHeader",
       "ethashProof": "Vec<EthashProof>",
-      "mmrRoot": "MMRHash",
-      "mmrProof": "Vec<MMRHash>"
+      "mmrRoot": "H256",
+      "mmrProof": "Vec<H256>"
     },
-    EthHeader: {
-      parentHash: 'H256',
-      timestamp: 'u64',
-      number: 'EthBlockNumber',
-      author: 'EthAddress',
-      transactionsRoot: 'H256',
-      unclesHash: 'H256',
-      extraData: 'Bytes',
-      stateRoot: 'H256',
-      receiptsRoot: 'H256',
-      logBloom: 'Bloom',
-      gasUsed: 'U256',
-      gasLimit: 'U256',
-      difficulty: 'U256',
-      seal: 'Vec<Bytes>',
-      hash: 'H256'
+    EthereumHeaderThing: {
+      "header": "EthereumHeader",
+	  	"mmrRoot": "H256"
     },
-    EthAddress: 'H160',
+    EthereumHeader: {
+      "parent_hash": "H256",
+      "timestamp": "u64",
+      "number": "EthereumBlockNumber",
+      "author": "EthereumAddress",
+      "transactions_root": "H256",
+      "uncles_hash": "H256",
+      "extra_data": "Bytes",
+      "state_root": "H256",
+      "receipts_root": "H256",
+      "log_bloom": "Bloom",
+      "gas_used": "U256",
+      "gas_limit": "U256",
+      "difficulty": "U256",
+      "seal": "Vec<Bytes>",
+      "hash": "Option<H256>"
+    },
+    EthereumAddress: 'H160',
     Bloom: '[u8; 256; Bloom]',
     H128: '[u8; 16; H128]',
     EthashProof: {
@@ -136,7 +141,7 @@ export default {
     },
     LogEntry: {},
     TransactionOutcome: {},
-    Receipt: {
+    EthereumReceipt: {
       gasUsed: 'U256',
       logBloom: 'Bloom',
       logs: 'Vec<LogEntry>',
@@ -150,8 +155,7 @@ export default {
     },
     RedeemFor: {
       _enum: {
-        Ring: null,
-        Kton: null,
+        RedeemFor: null,
         Deposit: null
       }
     },
@@ -165,6 +169,7 @@ export default {
       proof: 'Bytes',
       headerHash: 'H256'
     },
+    EthereumReceiptProofThing: "(EthereumHeader, EthereumReceiptProof, MMRProof)",
     MMRProof: "Vec<H256>",
     OtherSignature: {
       _enum: {
@@ -217,28 +222,17 @@ export default {
       "ktonBond": "Balance"
     },
     Round: "u64",
-    TcBlockNumber: "Vec<u8>",
-    TcHeaderHash: "Vec<u8>",
-    TcHeaderMMR: "Vec<u8>",
+    TcHeaderThingWithProof: "EthereumHeaderThingWithProof",
+	  TcHeaderThing: "EthereumHeaderThing",
+    TcBlockNumber: "u64",
+    TcHeaderHash: "H256",
     GameId: "TcBlockNumber",
-	  MMRHash: "Vec<u8>",
-    RawHeaderThing: "Vec<u8>",
-    TcHeaderBrief: {
-      "number": "TcBlockNumber",
-      "hash": "TcHeaderHash",
-      "parentHash": "TcHeaderHash",
-      "mmr": "TcHeaderMMR",
-      "others": "Vec<u8>"
-    },
-    BondedTcHeader: {
-      "headerBrief": "TcHeaderBrief",
-      "bond": "Balance"
-    },
-    RelayProposal: {
+    RelayProposalT: {
       "relayer": "AccountId",
-      "bondedChain": "Vec<BondedTcHeader>",
+      "bondedProposal": "Vec<(Balance, TcHeaderThing)>",
       "extendFromHeaderHash": "Option<TcHeaderHash>"
     },
+    CallHashOf: "Hash"
   },
   rpc: {
 

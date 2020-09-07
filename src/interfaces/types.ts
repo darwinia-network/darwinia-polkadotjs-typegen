@@ -4,3 +4,4 @@
 export * from './darwiniaInject/types';
 export * from './balances/types';
 export * from './staking/types';
+export * from './proxy/types';

@@ -4,10 +4,12 @@
 import { AnyNumber, ITuple, Observable } from '@polkadot/types/types';
 import { Option, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Data, bool, u32, u64 } from '@polkadot/types/primitive';
-import { AddressT, BalanceInfo, ElectionResultT, EthAddress, EthBlockNumber, EthHeader, EthTransactionIndex, ExposureT, GameId, H128, KtonBalance, MMRHash, Power, RKT, RawHeaderThing, RelayProposal, RingBalance, Round, StakingLedgerT, TcBlockNumber, TcHeaderHash, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { AddressT, BalanceInfo, ElectionResultT, EthereumBlockNumber, EthereumHeader, EthereumTransactionIndex, ExposureT, GameId, H128, KtonBalance, Power, RKT, RelayProposalT, RingBalance, Round, StakingLedgerT, TcBlockNumber, TcHeaderHash, TcHeaderThing, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { Announcement, ProxyDefinition } from '@darwinia/types/interfaces/proxy';
 import { UncleEntryItem } from '@polkadot/types/interfaces/authorship';
 import { BabeAuthorityWeight, MaybeRandomness, NextConfigDescriptor, Randomness } from '@polkadot/types/interfaces/babe';
 import { BalanceLock } from '@polkadot/types/interfaces/balances';
+import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { ProposalIndex, Votes } from '@polkadot/types/interfaces/collective';
 import { AuthorityId } from '@polkadot/types/interfaces/consensus';
 import { Proposal } from '@polkadot/types/interfaces/democracy';
@@ -16,7 +18,7 @@ import { RegistrarInfo, Registration } from '@polkadot/types/interfaces/identity
 import { AuthIndex } from '@polkadot/types/interfaces/imOnline';
 import { DeferredOffenceOf, Kind, OffenceDetails, OpaqueTimeSlot, ReportIdOf } from '@polkadot/types/interfaces/offences';
 import { ActiveRecovery, RecoveryConfig } from '@polkadot/types/interfaces/recovery';
-import { AccountId, AccountIndex, Balance, BalanceOf, BlockNumber, ExtrinsicsWeight, H256, Hash, KeyTypeId, Moment, OpaqueCall, Perbill, ProxyType, Releases, ValidatorId } from '@polkadot/types/interfaces/runtime';
+import { AccountId, AccountIndex, Balance, BalanceOf, BlockNumber, ExtrinsicsWeight, H256, Hash, KeyTypeId, Moment, OpaqueCall, Perbill, Releases, ValidatorId } from '@polkadot/types/interfaces/runtime';
 import { Scheduled, TaskAddress } from '@polkadot/types/interfaces/scheduler';
 import { Keys, SessionIndex } from '@polkadot/types/interfaces/session';
 import { Bid, BidKind, SocietyVote, StrikeCount, VouchingStatus } from '@polkadot/types/interfaces/society';
@@ -193,28 +195,28 @@ declare module '@polkadot/api/types/storage' {
     };
     ethereumBacking: {
       [index: string]: QueryableStorageEntry<ApiType>;
-      depositProofVerified: AugmentedQuery<ApiType, (arg: EthTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
-      depositRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthAddress>> & QueryableStorageEntry<ApiType>;
-      ktonProofVerified: AugmentedQuery<ApiType, (arg: EthTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
-      ktonRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthAddress>> & QueryableStorageEntry<ApiType>;
-      ringProofVerified: AugmentedQuery<ApiType, (arg: EthTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
-      ringRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthAddress>> & QueryableStorageEntry<ApiType>;
+      depositProofVerified: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
+      depositRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      ktonProofVerified: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
+      ktonRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      ringProofVerified: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
+      ringRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
     };
     ethereumRelay: {
       [index: string]: QueryableStorageEntry<ApiType>;
       /**
        * The confirm blocks keep in month
        **/
-      confirmBlockKeepInMonth: AugmentedQuery<ApiType, () => Observable<EthBlockNumber>> & QueryableStorageEntry<ApiType>;
+      confirmBlockKeepInMonth: AugmentedQuery<ApiType, () => Observable<EthereumBlockNumber>> & QueryableStorageEntry<ApiType>;
       /**
        * The number of ehtereum blocks in a month
        **/
-      confirmBlocksInCycle: AugmentedQuery<ApiType, () => Observable<EthBlockNumber>> & QueryableStorageEntry<ApiType>;
+      confirmBlocksInCycle: AugmentedQuery<ApiType, () => Observable<EthereumBlockNumber>> & QueryableStorageEntry<ApiType>;
       /**
        * The Ethereum headers confrimed by relayer game
        * The actural storage needs to be defined
        **/
-      confirmedHeadersDoubleMap: AugmentedQueryDoubleMap<ApiType, (key1: EthBlockNumber | AnyNumber | Uint8Array, key2: EthBlockNumber | AnyNumber | Uint8Array) => Observable<EthHeader>> & QueryableStorageEntry<ApiType>;
+      confirmedHeadersDoubleMap: AugmentedQueryDoubleMap<ApiType, (key1: EthereumBlockNumber | AnyNumber | Uint8Array, key2: EthereumBlockNumber | AnyNumber | Uint8Array) => Observable<EthereumHeader>> & QueryableStorageEntry<ApiType>;
       /**
        * Dags merkle roots of ethereum epoch (each epoch is 30000)
        **/
@@ -222,12 +224,43 @@ declare module '@polkadot/api/types/storage' {
       /**
        * The current confirm block cycle nubmer (default is one month one cycle)
        **/
-      lastConfirmedBlockCycle: AugmentedQuery<ApiType, () => Observable<EthBlockNumber>> & QueryableStorageEntry<ApiType>;
+      lastConfirmedBlockCycle: AugmentedQuery<ApiType, () => Observable<EthereumBlockNumber>> & QueryableStorageEntry<ApiType>;
       /**
        * Ethereum last confrimed header info including ethereum block number, hash, and mmr
        **/
-      lastConfirmedHeaderInfo: AugmentedQuery<ApiType, () => Observable<Option<ITuple<[EthBlockNumber, H256, MMRHash]>>>> & QueryableStorageEntry<ApiType>;
-      receiptVerifyFee: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
+      lastConfirmedHeaderInfo: AugmentedQuery<ApiType, () => Observable<ITuple<[EthereumBlockNumber, H256, H256]>>> & QueryableStorageEntry<ApiType>;
+      receiptVerifyFee: AugmentedQuery<ApiType, () => Observable<RingBalance>> & QueryableStorageEntry<ApiType>;
+    };
+    ethereumRelayerGame: {
+      [index: string]: QueryableStorageEntry<ApiType>;
+      /**
+       * All the bonds per relayer
+       **/
+      bonds: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<RingBalance>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The closed rounds which had passed the challenge time at this moment
+       **/
+      closedRounds: AugmentedQuery<ApiType, (arg: BlockNumber | AnyNumber | Uint8Array) => Observable<Vec<ITuple<[GameId, Round]>>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * All the proposal relay headers(not brief) here per game
+       **/
+      headers: AugmentedQueryDoubleMap<ApiType, (key1: GameId | AnyNumber | Uint8Array, key2: TcHeaderHash | string | Uint8Array) => Observable<TcHeaderThing>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The last confirmed block number record of a game when it start
+       **/
+      lastConfirmeds: AugmentedQuery<ApiType, (arg: GameId | AnyNumber | Uint8Array) => Observable<TcBlockNumber>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Dawinia Relay Guard System
+       **/
+      pendingHeaders: AugmentedQuery<ApiType, () => Observable<Vec<ITuple<[BlockNumber, TcBlockNumber, TcHeaderThing]>>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * All the proposals here per game
+       **/
+      proposals: AugmentedQuery<ApiType, (arg: GameId | AnyNumber | Uint8Array) => Observable<Vec<RelayProposalT>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The allow samples for each game
+       **/
+      samples: AugmentedQuery<ApiType, (arg: TcBlockNumber | AnyNumber | Uint8Array) => Observable<Vec<Vec<TcBlockNumber>>>> & QueryableStorageEntry<ApiType>;
     };
     finalityTracker: {
       [index: string]: QueryableStorageEntry<ApiType>;
@@ -407,10 +440,14 @@ declare module '@polkadot/api/types/storage' {
     proxy: {
       [index: string]: QueryableStorageEntry<ApiType>;
       /**
+       * The announcements made by the proxy (key).
+       **/
+      announcements: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<ITuple<[Vec<Announcement>, BalanceOf]>>> & QueryableStorageEntry<ApiType>;
+      /**
        * The set of account proxies. Maps the account which has delegated to the accounts
        * which are being delegated to, together with the amount held on deposit.
        **/
-      proxies: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<ITuple<[Vec<ITuple<[AccountId, ProxyType]>>, BalanceOf]>>> & QueryableStorageEntry<ApiType>;
+      proxies: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<ITuple<[Vec<ProxyDefinition>, BalanceOf]>>> & QueryableStorageEntry<ApiType>;
     };
     randomnessCollectiveFlip: {
       [index: string]: QueryableStorageEntry<ApiType>;
@@ -440,39 +477,6 @@ declare module '@polkadot/api/types/storage' {
        * The set of recoverable accounts and their recovery configuration.
        **/
       recoverable: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Option<RecoveryConfig>>> & QueryableStorageEntry<ApiType>;
-    };
-    relayerGame: {
-      [index: string]: QueryableStorageEntry<ApiType>;
-      /**
-       * All the bonds per relayer
-       **/
-      bonds: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<RingBalance>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The closed rounds which had passed the challenge time at this moment
-       **/
-      closedRounds: AugmentedQuery<ApiType, (arg: BlockNumber | AnyNumber | Uint8Array) => Observable<Vec<ITuple<[GameId, Round]>>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * All the proposal relay headers(not brief) here per game
-       **/
-      headers: AugmentedQueryDoubleMap<ApiType, (key1: GameId | string | Uint8Array, key2: TcHeaderHash | string | Uint8Array) => Observable<RawHeaderThing>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The last confirmed block number record of a game when it start
-       **/
-      lastConfirmeds: AugmentedQuery<ApiType, (arg: GameId | string | Uint8Array) => Observable<TcBlockNumber>> & QueryableStorageEntry<ApiType>;
-      /**
-       * Dawinia Relay Guard System
-       * 
-       * https://github.com/darwinia-network/darwinia-common/issues/150
-       **/
-      pendingHeaders: AugmentedQuery<ApiType, () => Observable<Vec<ITuple<[BlockNumber, TcBlockNumber, RawHeaderThing]>>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * All the proposals here per game
-       **/
-      proposals: AugmentedQuery<ApiType, (arg: GameId | string | Uint8Array) => Observable<Vec<RelayProposal>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * The allow samples for each game
-       **/
-      samples: AugmentedQuery<ApiType, (arg: TcBlockNumber | string | Uint8Array) => Observable<Vec<Vec<TcBlockNumber>>>> & QueryableStorageEntry<ApiType>;
     };
     scheduler: {
       [index: string]: QueryableStorageEntry<ApiType>;
