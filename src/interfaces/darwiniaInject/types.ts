@@ -3,7 +3,7 @@
 
 import { ITuple } from '@polkadot/types/types';
 import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
-import { Bytes, Text, U256, u32, u64, u8 } from '@polkadot/types/primitive';
+import { Bytes, Text, U256, u128, u32, u64, u8 } from '@polkadot/types/primitive';
 import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, Index, LockIdentifier } from '@polkadot/types/interfaces/runtime';
 import { RefCount } from '@polkadot/types/interfaces/system';
 import { ElectionCompute, EraIndex }  from '@polkadot/types/interfaces/staking';
@@ -204,6 +204,9 @@ export interface LogEntry extends Struct {}
 /** @name LookupSource */
 export interface LookupSource extends AccountId {}
 
+/** @name MappedRing */
+export interface MappedRing extends u128 {}
+
 /** @name MerkleMountainRangeRootLog */
 export interface MerkleMountainRangeRootLog extends Struct {
   readonly prefix: U8aFixed;
@@ -241,7 +244,7 @@ export interface Reasons extends Enum {
 
 /** @name RedeemFor */
 export interface RedeemFor extends Enum {
-  readonly isRedeemFor: boolean;
+  readonly isToken: boolean;
   readonly isDeposit: boolean;
 }
 

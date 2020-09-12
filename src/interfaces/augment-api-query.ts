@@ -4,7 +4,7 @@
 import { AnyNumber, ITuple, Observable } from '@polkadot/types/types';
 import { Option, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Data, bool, u32, u64 } from '@polkadot/types/primitive';
-import { AddressT, BalanceInfo, ElectionResultT, EthereumBlockNumber, EthereumHeader, EthereumTransactionIndex, ExposureT, GameId, H128, KtonBalance, Power, RKT, RelayProposalT, RingBalance, Round, StakingLedgerT, TcBlockNumber, TcHeaderHash, TcHeaderThing, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { AddressT, BalanceInfo, ElectionResultT, EthereumBlockNumber, EthereumHeader, EthereumTransactionIndex, ExposureT, GameId, H128, KtonBalance, MappedRing, Power, RKT, RelayProposalT, RingBalance, Round, StakingLedgerT, TcBlockNumber, TcHeaderHash, TcHeaderThing, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
 import { Announcement, ProxyDefinition } from '@darwinia/types/interfaces/proxy';
 import { UncleEntryItem } from '@polkadot/types/interfaces/authorship';
 import { BabeAuthorityWeight, MaybeRandomness, NextConfigDescriptor, Randomness } from '@polkadot/types/interfaces/babe';
@@ -167,6 +167,10 @@ declare module '@polkadot/api/types/storage' {
        **/
       voting: AugmentedQuery<ApiType, (arg: Hash | string | Uint8Array) => Observable<Option<Votes>>> & QueryableStorageEntry<ApiType>;
     };
+    crabIssuing: {
+      [index: string]: QueryableStorageEntry<ApiType>;
+      totalMappedRing: AugmentedQuery<ApiType, () => Observable<MappedRing>> & QueryableStorageEntry<ApiType>;
+    };
     electionsPhragmen: {
       [index: string]: QueryableStorageEntry<ApiType>;
       /**
@@ -195,12 +199,11 @@ declare module '@polkadot/api/types/storage' {
     };
     ethereumBacking: {
       [index: string]: QueryableStorageEntry<ApiType>;
-      depositProofVerified: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
       depositRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
-      ktonProofVerified: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
-      ktonRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
-      ringProofVerified: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
-      ringRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      ktonTokenAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      ringTokenAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      tokenRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      verifiedProof: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
     };
     ethereumRelay: {
       [index: string]: QueryableStorageEntry<ApiType>;

@@ -323,6 +323,10 @@ declare module '@polkadot/api/types/submittable' {
        **/
       vote: AugmentedSubmittable<(proposal: Hash | string | Uint8Array, index: Compact<ProposalIndex> | AnyNumber | Uint8Array, approve: bool | boolean | Uint8Array) => SubmittableExtrinsic<ApiType>>;
     };
+    crabIssuing: {
+      [index: string]: SubmittableExtrinsicFunction<ApiType>;
+      swapAndBurnToGenesis: AugmentedSubmittable<(amount: RingBalance | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+    };
     electionsPhragmen: {
       [index: string]: SubmittableExtrinsicFunction<ApiType>;
       /**
@@ -495,7 +499,7 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(1)`
        * # </weight>
        **/
-      redeem: AugmentedSubmittable<(act: RedeemFor | 'RedeemFor'|'Deposit' | number | Uint8Array, proof: EthereumReceiptProofThing) => SubmittableExtrinsic<ApiType>>;
+      redeem: AugmentedSubmittable<(act: RedeemFor | 'Token'|'Deposit' | number | Uint8Array, proof: EthereumReceiptProofThing) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set a new deposit redeem address.
        * 
@@ -509,18 +513,6 @@ declare module '@polkadot/api/types/submittable' {
        **/
       setDepositRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
-       * Set a new kton redeem address.
-       * 
-       * The dispatch origin of this call must be _Root_.
-       * 
-       * - `new`: The new kton redeem address.
-       * 
-       * # <weight>
-       * - `O(1)`.
-       * # </weight>
-       **/
-      setKtonRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
-      /**
        * Set a new ring redeem address.
        * 
        * The dispatch origin of this call must be _Root_.
@@ -531,7 +523,7 @@ declare module '@polkadot/api/types/submittable' {
        * - `O(1)`.
        * # </weight>
        **/
-      setRingRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      setTokenRedeemAddress: AugmentedSubmittable<(updated: EthereumAddress | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
     };
     ethereumRelay: {
       [index: string]: SubmittableExtrinsicFunction<ApiType>;

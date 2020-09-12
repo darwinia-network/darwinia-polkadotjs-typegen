@@ -1,6 +1,6 @@
 {
   "name": "@darwinia/typegen",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "description": "A sample using @polkadot/typegen to generate type definitions",
   "repository": "https://github.com/WoeOm/darwinia-polkadotjs-typegen",
   "author": "WoeOm",
@@ -13,7 +13,6 @@
     "generate:internal": "ts-node --skip-project node_modules/@polkadot/typegen/scripts/polkadot-types-internal-interfaces --package @darwinia/types/interfaces --endpoint ./darwinia.json --output ./src/interfaces",
     "lint": "tsc --noEmit --pretty",
     "test:one": "ts-node"
-
   },
   "dependencies": {
     "@polkadot/api": "1.27.1"

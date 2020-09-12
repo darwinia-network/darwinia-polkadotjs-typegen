@@ -155,7 +155,7 @@ export default {
     },
     RedeemFor: {
       _enum: {
-        RedeemFor: null,
+        Token: null,
         Deposit: null
       }
     },
@@ -232,7 +232,8 @@ export default {
       "bondedProposal": "Vec<(Balance, TcHeaderThing)>",
       "extendFromHeaderHash": "Option<TcHeaderHash>"
     },
-    CallHashOf: "Hash"
+    CallHashOf: "Hash",
+    MappedRing: "u128"
   },
   rpc: {
 
