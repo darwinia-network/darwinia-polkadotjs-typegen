@@ -245,15 +245,6 @@ export interface OtherSignature extends Enum {
 /** @name Power */
 export interface Power extends u32 {}
 
-/** @name ProxyType */
-export interface ProxyType extends Enum {
-  readonly isAny: boolean;
-  readonly isNonTransfer: boolean;
-  readonly isStaking: boolean;
-  readonly isIdentityJudgement: boolean;
-  readonly isEthereumBridge: boolean;
-}
-
 /** @name Reasons */
 export interface Reasons extends Enum {
   readonly isFee: boolean;

@@ -241,16 +241,7 @@ export default {
       "extendFromHeaderHash": "Option<TcHeaderHash>"
     },
     CallHashOf: "Hash",
-    MappedRing: "u128",
-    ProxyType: {
-			_enum: {
-				"Any": null,
-				"NonTransfer": null,
-				"Staking": null,
-				"IdentityJudgement": null,
-				"EthereumBridge": null
-			}
-		}
+    MappedRing: "u128"
   },
   rpc: {
 
