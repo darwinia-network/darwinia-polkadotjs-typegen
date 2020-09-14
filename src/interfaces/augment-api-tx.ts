@@ -4,7 +4,7 @@
 import { AnyNumber, ITuple } from '@polkadot/types/types';
 import { Compact, Option, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Data, bool, u16, u32, u64, u8 } from '@polkadot/types/primitive';
-import { CallHashOf, EthereumBlockNumber, EthereumHeader, EthereumHeaderThingWithProof, EthereumReceiptProof, EthereumReceiptProofThing, KtonBalance, MMRProof, OtherAddress, OtherSignature, RedeemFor, RingBalance, StakingBalanceT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { CallHashOf, EthereumBlockNumber, EthereumHeader, EthereumHeaderThing, EthereumHeaderThingWithProof, EthereumReceiptProof, EthereumReceiptProofThing, KtonBalance, MMRProof, OtherAddress, OtherSignature, RedeemFor, RingBalance, StakingBalanceT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
 import { BabeEquivocationProof } from '@polkadot/types/interfaces/babe';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { MemberCount, ProposalIndex } from '@polkadot/types/interfaces/collective';
@@ -558,20 +558,14 @@ declare module '@polkadot/api/types/submittable' {
        * - `set_receipt_verify_fee` can be used to set the verify fee for each receipt check.
        * # </weight>
        **/
-      checkReceipt: AugmentedSubmittable<(proofRecord: EthereumReceiptProof | { index?: any; proof?: any; headerHash?: any } | string | Uint8Array, ethHeader: EthereumHeader | { parent_hash?: any; timestamp?: any; number?: any; author?: any; transactions_root?: any; uncles_hash?: any; extra_data?: any; state_root?: any; receipts_root?: any; log_bloom?: any; gas_used?: any; gas_limit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, mmrProof: MMRProof) => SubmittableExtrinsic<ApiType>>;
+      checkReceipt: AugmentedSubmittable<(proofRecord: EthereumReceiptProof | { index?: any; proof?: any; headerHash?: any } | string | Uint8Array, ethHeader: EthereumHeader | { parent_hash?: any; timestamp?: any; number?: any; author?: any; transactions_root?: any; uncles_hash?: any; extra_data?: any; state_root?: any; receipts_root?: any; log_bloom?: any; gas_used?: any; gas_limit?: any; difficulty?: any; seal?: any; hash?: any } | string | Uint8Array, mmrProof: MMRProof | { memberLeafIndex?: any; lastLeafIndex?: any; proof?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      cleanConfirmeds: AugmentedSubmittable<() => SubmittableExtrinsic<ApiType>>;
       rejectPendingHeader: AugmentedSubmittable<(pending: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Remove the specific malicous block
        **/
       removeConfirmedBlock: AugmentedSubmittable<(number: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
-      /**
-       * Remove the blocks in particular month (month is calculated as cycle)
-       **/
-      removeConfirmedBlocksInMonth: AugmentedSubmittable<(cycle: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
-      /**
-       * Setup the parameters to delete the confirmed blocks after month * blocks_in_month
-       **/
-      setConfirmedBlocksCleanParameters: AugmentedSubmittable<(month: EthereumBlockNumber | AnyNumber | Uint8Array, blocksInMonth: EthereumBlockNumber | AnyNumber | Uint8Array) => SubmittableExtrinsic<ApiType>>;
+      setConfirmed: AugmentedSubmittable<(headerThing: EthereumHeaderThing | { header?: any; mmrRoot?: any } | string | Uint8Array) => SubmittableExtrinsic<ApiType>>;
       /**
        * Set verify receipt fee
        * 

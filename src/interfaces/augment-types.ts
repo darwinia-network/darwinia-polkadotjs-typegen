@@ -4,7 +4,7 @@
 import { Compact, Option, Raw, Vec } from '@polkadot/types/codec';
 import { BitVec, Bytes, Data, DoNotConstruct, Null, StorageKey, Text, Type, U256, bool, i128, i16, i256, i32, i64, i8, u128, u16, u256, u32, u64, u8, usize } from '@polkadot/types/primitive';
 import { UsableBalance } from '@darwinia/types/interfaces/balances';
-import { AccountData, AddressT, BalanceInfo, BalanceLock, Bloom, CallHashOf, Common, DepositId, ElectionResultT, EthReceiptProof, EthashProof, EthereumBlockNumber, EthereumHeader, EthereumHeaderBrief, EthereumHeaderThing, EthereumHeaderThingWithProof, EthereumNetworkType, EthereumReceipt, EthereumReceiptProof, EthereumReceiptProofThing, EthereumTransactionIndex, Exposure, ExposureT, GameId, H128, IndividualExposure, KtonBalance, LockFor, LogEntry, MMRProof, MappedRing, MerkleMountainRangeRootLog, OtherAddress, OtherSignature, Power, RKT, Reasons, RedeemFor, RelayProposalT, RewardDestination, RingBalance, Round, SpanRecord, Staked, StakingBalanceT, StakingLedgerT, StakingLock, TcBlockNumber, TcHeaderHash, TcHeaderThing, TcHeaderThingWithProof, TimeDepositItem, TransactionOutcome, TronAddress, TsInMs, UnappliedSlash, Unbonding } from '@darwinia/types/interfaces/darwiniaInject';
+import { AccountData, AddressT, BalanceInfo, BalanceLock, Bloom, CallHashOf, Common, ConfirmedEthereumHeaderInfo, DepositId, ElectionResultT, EthReceiptProof, EthashProof, EthereumBlockNumber, EthereumHeader, EthereumHeaderBrief, EthereumHeaderThing, EthereumHeaderThingWithProof, EthereumNetworkType, EthereumReceipt, EthereumReceiptProof, EthereumReceiptProofThing, EthereumTransactionIndex, Exposure, ExposureT, GameId, H128, IndividualExposure, KtonBalance, LockFor, LogEntry, MMRProof, MappedRing, MerkleMountainRangeRootLog, OtherAddress, OtherSignature, Power, RKT, Reasons, RedeemFor, RelayProposalT, RewardDestination, RingBalance, Round, SpanRecord, Staked, StakingBalanceT, StakingLedgerT, StakingLock, TcBlockNumber, TcHeaderHash, TcHeaderThing, TcHeaderThingWithProof, TimeDepositItem, TransactionOutcome, TronAddress, TsInMs, UnappliedSlash, Unbonding } from '@darwinia/types/interfaces/darwiniaInject';
 import { Announcement, ProxyAnnouncement, ProxyDefinition } from '@darwinia/types/interfaces/proxy';
 import { PowerOf } from '@darwinia/types/interfaces/staking';
 import { BlockAttestations, IncludedBlocks, MoreAttestations } from '@polkadot/types/interfaces/attestations';
@@ -1791,6 +1791,9 @@ declare module '@polkadot/types/types/registry' {
     EthereumHeaderThingWithProof: EthereumHeaderThingWithProof;
     'Option<EthereumHeaderThingWithProof>': Option<EthereumHeaderThingWithProof>;
     'Vec<EthereumHeaderThingWithProof>': Vec<EthereumHeaderThingWithProof>;
+    ConfirmedEthereumHeaderInfo: ConfirmedEthereumHeaderInfo;
+    'Option<ConfirmedEthereumHeaderInfo>': Option<ConfirmedEthereumHeaderInfo>;
+    'Vec<ConfirmedEthereumHeaderInfo>': Vec<ConfirmedEthereumHeaderInfo>;
     EthereumHeaderThing: EthereumHeaderThing;
     'Option<EthereumHeaderThing>': Option<EthereumHeaderThing>;
     'Vec<EthereumHeaderThing>': Vec<EthereumHeaderThing>;

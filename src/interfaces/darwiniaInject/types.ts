@@ -61,6 +61,12 @@ export interface Common extends Struct {
   readonly amount: Balance;
 }
 
+/** @name ConfirmedEthereumHeaderInfo */
+export interface ConfirmedEthereumHeaderInfo extends Struct {
+  readonly header: EthereumHeader;
+  readonly mmrRoot: H256;
+}
+
 /** @name DepositId */
 export interface DepositId extends U256 {}
 
@@ -214,7 +220,11 @@ export interface MerkleMountainRangeRootLog extends Struct {
 }
 
 /** @name MMRProof */
-export interface MMRProof extends Vec<H256> {}
+export interface MMRProof extends Struct {
+  readonly memberLeafIndex: u64;
+  readonly lastLeafIndex: u64;
+  readonly proof: Vec<H256>;
+}
 
 /** @name OtherAddress */
 export interface OtherAddress extends Enum {
@@ -234,6 +244,15 @@ export interface OtherSignature extends Enum {
 
 /** @name Power */
 export interface Power extends u32 {}
+
+/** @name ProxyType */
+export interface ProxyType extends Enum {
+  readonly isAny: boolean;
+  readonly isNonTransfer: boolean;
+  readonly isStaking: boolean;
+  readonly isIdentityJudgement: boolean;
+  readonly isEthereumBridge: boolean;
+}
 
 /** @name Reasons */
 export interface Reasons extends Enum {

@@ -111,6 +111,10 @@ export default {
       "mmrRoot": "H256",
       "mmrProof": "Vec<H256>"
     },
+    ConfirmedEthereumHeaderInfo: {
+      "header": "EthereumHeader",
+	  	"mmrRoot": "H256"
+    },
     EthereumHeaderThing: {
       "header": "EthereumHeader",
 	  	"mmrRoot": "H256"
@@ -170,7 +174,11 @@ export default {
       headerHash: 'H256'
     },
     EthereumReceiptProofThing: "(EthereumHeader, EthereumReceiptProof, MMRProof)",
-    MMRProof: "Vec<H256>",
+    MMRProof: {
+      memberLeafIndex: "u64",
+      lastLeafIndex: "u64",
+      proof: "Vec<H256>"
+    },
     OtherSignature: {
       _enum: {
         Eth: 'EcdsaSignature',
@@ -233,7 +241,16 @@ export default {
       "extendFromHeaderHash": "Option<TcHeaderHash>"
     },
     CallHashOf: "Hash",
-    MappedRing: "u128"
+    MappedRing: "u128",
+    ProxyType: {
+			_enum: {
+				"Any": null,
+				"NonTransfer": null,
+				"Staking": null,
+				"IdentityJudgement": null,
+				"EthereumBridge": null
+			}
+		}
   },
   rpc: {
 
