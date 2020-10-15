@@ -64,16 +64,6 @@ export default {
       startTime: 'Compact<TsInMs>',
       expireTime: 'Compact<TsInMs>'
     },
-    RewardDestination: {
-      _enum: {
-        Staked: 'Staked',
-        Stash: null,
-        Controller: null
-      }
-    },
-    Staked: {
-      promiseMonth: 'u8'
-    },
     ExposureT: {
       ownRingBalance: 'Compact<Balance>',
       ownKtonBalance: 'Compact<Balance>',
