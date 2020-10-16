@@ -265,14 +265,6 @@ export interface RelayProposalT extends Struct {
   readonly extendFromHeaderHash: Option<TcHeaderHash>;
 }
 
-/** @name RewardDestination */
-export interface RewardDestination extends Enum {
-  readonly isStaked: boolean;
-  readonly asStaked: Staked;
-  readonly isStash: boolean;
-  readonly isController: boolean;
-}
-
 /** @name RingBalance */
 export interface RingBalance extends Balance {}
 
@@ -289,11 +281,6 @@ export interface Round extends u64 {}
 export interface SpanRecord extends Struct {
   readonly slashed: RKT;
   readonly paidOut: RKT;
-}
-
-/** @name Staked */
-export interface Staked extends Struct {
-  readonly promiseMonth: u8;
 }
 
 /** @name StakingBalanceT */
