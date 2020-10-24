@@ -217,16 +217,6 @@ export default {
       maybeExtendedRelayAffirmationId: "Option<Vec<u8>>",
       verified: "bool"
     },
-
-    ProxyType: {
-			"_enum": {
-				"Any": null,
-				"NonTransfer": null,
-				"Staking": null,
-				"IdentityJudgement": null,
-				"EthereumBridge": null
-			}
-		},
   
     ChainProperties: {
       ss58Format: 'Option<u8>',
