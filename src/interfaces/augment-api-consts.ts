@@ -3,7 +3,7 @@
 
 import { Codec } from '@polkadot/types/types';
 import { Vec } from '@polkadot/types/codec';
-import { u16, u32, u64 } from '@polkadot/types/primitive';
+import { Bytes, u16, u32, u64, u8 } from '@polkadot/types/primitive';
 import { KtonBalance, Power, RingBalance } from '@darwinia/types/interfaces/darwiniaInject';
 import { Balance, BalanceOf, BlockNumber, LockIdentifier, ModuleId, Moment, Perbill, Percent, Permill, RuntimeDbWeight, Weight } from '@polkadot/types/interfaces/runtime';
 import { SessionIndex } from '@polkadot/types/interfaces/session';
@@ -36,6 +36,57 @@ declare module '@polkadot/api/types/consts' {
        **/
       existentialDeposit: Balance & AugmentedConst<ApiType>;
     };
+    claims: {
+      [key: string]: Codec;
+      moduleId: ModuleId & AugmentedConst<ApiType>;
+      /**
+       * The Prefix that is used in signed Ethereum messages for this network
+       **/
+      prefix: Bytes & AugmentedConst<ApiType>;
+    };
+    crabIssuing: {
+      [key: string]: Codec;
+      moduleId: ModuleId & AugmentedConst<ApiType>;
+    };
+    democracy: {
+      [key: string]: Codec;
+      /**
+       * Period in blocks where an external proposal may not be re-submitted after being vetoed.
+       **/
+      cooloffPeriod: BlockNumber & AugmentedConst<ApiType>;
+      /**
+       * The minimum period of locking and the period between a proposal being approved and enacted.
+       * 
+       * It should generally be a little more than the unstake period to ensure that
+       * voting stakers have an opportunity to remove themselves from the system in the case where
+       * they are on the losing side of a vote.
+       **/
+      enactmentPeriod: BlockNumber & AugmentedConst<ApiType>;
+      /**
+       * Minimum voting period allowed for an emergency referendum.
+       **/
+      fastTrackVotingPeriod: BlockNumber & AugmentedConst<ApiType>;
+      /**
+       * How often (in blocks) new public referenda are launched.
+       **/
+      launchPeriod: BlockNumber & AugmentedConst<ApiType>;
+      /**
+       * The maximum number of votes for an account.
+       **/
+      maxVotes: u32 & AugmentedConst<ApiType>;
+      /**
+       * The minimum amount to be used as a deposit for a public referendum proposal.
+       **/
+      minimumDeposit: BalanceOf & AugmentedConst<ApiType>;
+      /**
+       * The amount of balance that must be deposited per byte of preimage stored.
+       **/
+      preimageByteDeposit: BalanceOf & AugmentedConst<ApiType>;
+      /**
+       * How often (in blocks) to check for new votes.
+       **/
+      votingPeriod: BlockNumber & AugmentedConst<ApiType>;
+    };
     electionsPhragmen: {
       [key: string]: Codec;
       candidacyBond: BalanceOf & AugmentedConst<ApiType>;
@@ -51,6 +102,17 @@ declare module '@polkadot/api/types/consts' {
        * The treasury's module id, used for deriving its sovereign account ID.
        **/
       moduleId: ModuleId & AugmentedConst<ApiType>;
+    };
+    ethereumRelay: {
+      [key: string]: Codec;
+      approveThreshold: Perbill & AugmentedConst<ApiType>;
+      confirmPeriod: BlockNumber & AugmentedConst<ApiType>;
+      moduleId: ModuleId & AugmentedConst<ApiType>;
+      rejectThreshold: Perbill & AugmentedConst<ApiType>;
+    };
+    ethereumRelayerGame: {
+      [key: string]: Codec;
+      maxActiveGames: u8 & AugmentedConst<ApiType>;
     };
     finalityTracker: {
       [key: string]: Codec;
@@ -93,6 +155,13 @@ declare module '@polkadot/api/types/consts' {
        * another trie item whose value is the size of an account ID plus 32 bytes.
        **/
       subAccountDeposit: BalanceOf & AugmentedConst<ApiType>;
+    };
+    indices: {
+      [key: string]: Codec;
+      /**
+       * The deposit needed for reserving an index.
+       **/
+      deposit: BalanceOf & AugmentedConst<ApiType>;
     };
     kton: {
       [key: string]: Codec;
@@ -237,6 +306,7 @@ declare module '@polkadot/api/types/consts' {
        * The threshold of improvement that should be provided for a new solution to be accepted.
        **/
       minSolutionScoreBump: Perbill & AugmentedConst<ApiType>;
+      moduleId: ModuleId & AugmentedConst<ApiType>;
       /**
        * Number of sessions per era.
        **/
@@ -362,13 +432,6 @@ declare module '@polkadot/api/types/consts' {
        * The amount held on deposit for placing a tip report.
        **/
       tipReportDepositBase: RingBalance & AugmentedConst<ApiType>;
-    };
-    vesting: {
-      [key: string]: Codec;
-      /**
-       * The minimum amount to be transferred to create a new vesting schedule.
-       **/
-      minVestedTransfer: BalanceOf & AugmentedConst<ApiType>;
     };
   }
 

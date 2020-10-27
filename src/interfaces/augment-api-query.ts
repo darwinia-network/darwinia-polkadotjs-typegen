@@ -4,21 +4,23 @@
 import { AnyNumber, ITuple, Observable } from '@polkadot/types/types';
 import { Option, U8aFixed, Vec } from '@polkadot/types/codec';
 import { Bytes, Data, bool, u32, u64 } from '@polkadot/types/primitive';
-import { BalanceInfo, ElectionResultT, EthereumBlockNumber, EthereumRelayHeaderParcel, EthereumTransactionIndex, ExposureT, H128, KtonBalance, Power, RKT, RelayAffirmationT, RelayHeaderId, RelayHeaderParcel, RingBalance, StakingLedgerT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { AddressT, BalanceInfo, ElectionResultT, EthereumBlockNumber, EthereumRelayHeaderParcel, EthereumTransactionIndex, ExposureT, H128, KtonBalance, MappedRing, Power, RKT, RingBalance, StakingLedgerT, TsInMs } from '@darwinia/types/interfaces/darwiniaInject';
+import { RelayAffirmationT, RelayHeaderId, RelayVotingState } from '@darwinia/types/interfaces/relayerGame';
 import { UncleEntryItem } from '@polkadot/types/interfaces/authorship';
 import { BabeAuthorityWeight, MaybeRandomness, NextConfigDescriptor, Randomness } from '@polkadot/types/interfaces/babe';
 import { BalanceLock } from '@polkadot/types/interfaces/balances';
 import { EthereumAddress } from '@polkadot/types/interfaces/claims';
 import { ProposalIndex, Votes } from '@polkadot/types/interfaces/collective';
 import { AuthorityId } from '@polkadot/types/interfaces/consensus';
-import { Proposal } from '@polkadot/types/interfaces/democracy';
+import { PreimageStatus, PropIndex, Proposal, ReferendumIndex, ReferendumInfo, Voting } from '@polkadot/types/interfaces/democracy';
+import { VoteThreshold } from '@polkadot/types/interfaces/elections';
 import { SetId, StoredPendingChange, StoredState } from '@polkadot/types/interfaces/grandpa';
 import { RegistrarInfo, Registration } from '@polkadot/types/interfaces/identity';
 import { AuthIndex } from '@polkadot/types/interfaces/imOnline';
 import { DeferredOffenceOf, Kind, OffenceDetails, OpaqueTimeSlot, ReportIdOf } from '@polkadot/types/interfaces/offences';
 import { ProxyAnnouncement, ProxyDefinition } from '@polkadot/types/interfaces/proxy';
 import { ActiveRecovery, RecoveryConfig } from '@polkadot/types/interfaces/recovery';
-import { AccountId, Balance, BalanceOf, BlockNumber, ExtrinsicsWeight, Hash, KeyTypeId, Moment, OpaqueCall, Perbill, Releases, ValidatorId } from '@polkadot/types/interfaces/runtime';
+import { AccountId, AccountIndex, Balance, BalanceOf, BlockNumber, ExtrinsicsWeight, Hash, KeyTypeId, Moment, OpaqueCall, Perbill, Releases, ValidatorId } from '@polkadot/types/interfaces/runtime';
 import { Scheduled, TaskAddress } from '@polkadot/types/interfaces/scheduler';
 import { Keys, SessionIndex } from '@polkadot/types/interfaces/session';
 import { Bid, BidKind, SocietyVote, StrikeCount, VouchingStatus } from '@polkadot/types/interfaces/society';
@@ -27,7 +29,6 @@ import { AccountInfo, DigestOf, EventIndex, EventRecord, LastRuntimeUpgradeInfo,
 import { Bounty, BountyIndex, OpenTip, TreasuryProposal } from '@polkadot/types/interfaces/treasury';
 import { Multiplier } from '@polkadot/types/interfaces/txpayment';
 import { Multisig } from '@polkadot/types/interfaces/utility';
-import { VestingInfo } from '@polkadot/types/interfaces/vesting';
 import { ApiTypes } from '@polkadot/api/types';
 
 declare module '@polkadot/api/types/storage' {
@@ -135,6 +136,11 @@ declare module '@polkadot/api/types/storage' {
        **/
       totalIssuance: AugmentedQuery<ApiType, () => Observable<Balance>> & QueryableStorageEntry<ApiType>;
     };
+    claims: {
+      [key: string]: QueryableStorageEntry<ApiType>;
+      claimsFromEth: AugmentedQuery<ApiType, (arg: AddressT | string | Uint8Array) => Observable<Option<RingBalance>>> & QueryableStorageEntry<ApiType>;
+      claimsFromTron: AugmentedQuery<ApiType, (arg: AddressT | string | Uint8Array) => Observable<Option<RingBalance>>> & QueryableStorageEntry<ApiType>;
+    };
     council: {
       [key: string]: QueryableStorageEntry<ApiType>;
       /**
@@ -162,8 +168,87 @@ declare module '@polkadot/api/types/storage' {
        **/
       voting: AugmentedQuery<ApiType, (arg: Hash | string | Uint8Array) => Observable<Option<Votes>>> & QueryableStorageEntry<ApiType>;
     };
-    crabBacking: {
+    crabIssuing: {
       [key: string]: QueryableStorageEntry<ApiType>;
+      totalMappedRing: AugmentedQuery<ApiType, () => Observable<MappedRing>> & QueryableStorageEntry<ApiType>;
+    };
+    democracy: {
+      [key: string]: QueryableStorageEntry<ApiType>;
+      /**
+       * A record of who vetoed what. Maps proposal hash to a possible existent block number
+       * (until when it may not be resubmitted) and who vetoed it.
+       **/
+      blacklist: AugmentedQuery<ApiType, (arg: Hash | string | Uint8Array) => Observable<Option<ITuple<[BlockNumber, Vec<AccountId>]>>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Record of all proposals that have been subject to emergency cancellation.
+       **/
+      cancellations: AugmentedQuery<ApiType, (arg: Hash | string | Uint8Array) => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Those who have locked a deposit.
+       * 
+       * TWOX-NOTE: Safe, as increasing integer keys are safe.
+       **/
+      depositOf: AugmentedQuery<ApiType, (arg: PropIndex | AnyNumber | Uint8Array) => Observable<Option<ITuple<[Vec<AccountId>, BalanceOf]>>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * True if the last referendum tabled was submitted externally. False if it was a public
+       * proposal.
+       **/
+      lastTabledWasExternal: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Accounts for which there are locks in action which may be removed at some point in the
+       * future. The value is the block number at which the lock expires and may be removed.
+       * 
+       * TWOX-NOTE: OK ― `AccountId` is a secure hash.
+       **/
+      locks: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Option<BlockNumber>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The lowest referendum index representing an unbaked referendum. Equal to
+       * `ReferendumCount` if there isn't a unbaked referendum.
+       **/
+      lowestUnbaked: AugmentedQuery<ApiType, () => Observable<ReferendumIndex>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The referendum to be tabled whenever it would be valid to table an external proposal.
+       * This happens when a referendum needs to be tabled and one of two conditions are met:
+       * - `LastTabledWasExternal` is `false`; or
+       * - `PublicProps` is empty.
+       **/
+      nextExternal: AugmentedQuery<ApiType, () => Observable<Option<ITuple<[Hash, VoteThreshold]>>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Map of hashes to the proposal preimage, along with who registered it and their deposit.
+       * The block number is the block at which it was deposited.
+       **/
+      preimages: AugmentedQuery<ApiType, (arg: Hash | string | Uint8Array) => Observable<Option<PreimageStatus>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The number of (public) proposals that have been made so far.
+       **/
+      publicPropCount: AugmentedQuery<ApiType, () => Observable<PropIndex>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The public proposals. Unsorted. The second item is the proposal's hash.
+       **/
+      publicProps: AugmentedQuery<ApiType, () => Observable<Vec<ITuple<[PropIndex, Hash, AccountId]>>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * The next free referendum index, aka the number of referenda started so far.
+       **/
+      referendumCount: AugmentedQuery<ApiType, () => Observable<ReferendumIndex>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Information concerning any given referendum.
+       * 
+       * TWOX-NOTE: SAFE as indexes are not under an attacker’s control.
+       **/
+      referendumInfoOf: AugmentedQuery<ApiType, (arg: ReferendumIndex | AnyNumber | Uint8Array) => Observable<Option<ReferendumInfo>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * Storage version of the pallet.
+       * 
+       * New networks start with last version.
+       **/
+      storageVersion: AugmentedQuery<ApiType, () => Observable<Option<Releases>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * All votes for a particular voter. We store the balance for the number of votes that we
+       * have recorded. The second item is the total amount of delegations, that will be added.
+       * 
+       * TWOX-NOTE: SAFE as `AccountId`s are crypto hashes anyway.
+       **/
+      votingOf: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Voting>> & QueryableStorageEntry<ApiType>;
     };
     electionsPhragmen: {
       [key: string]: QueryableStorageEntry<ApiType>;
@@ -195,6 +280,7 @@ declare module '@polkadot/api/types/storage' {
       [key: string]: QueryableStorageEntry<ApiType>;
       depositRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
       ktonTokenAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
+      redeemStatus: AugmentedQuery<ApiType, () => Observable<bool>> & QueryableStorageEntry<ApiType>;
       ringTokenAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
       tokenRedeemAddress: AugmentedQuery<ApiType, () => Observable<EthereumAddress>> & QueryableStorageEntry<ApiType>;
       verifiedProof: AugmentedQuery<ApiType, (arg: EthereumTransactionIndex) => Observable<Option<bool>>> & QueryableStorageEntry<ApiType>;
@@ -220,6 +306,7 @@ declare module '@polkadot/api/types/storage' {
        * Dags merkle roots of ethereum epoch (each epoch is 30000)
        **/
       dagsMerkleRoots: AugmentedQuery<ApiType, (arg: u64 | AnyNumber | Uint8Array) => Observable<H128>> & QueryableStorageEntry<ApiType>;
+      pendingRelayHeaderParcels: AugmentedQuery<ApiType, () => Observable<Vec<ITuple<[BlockNumber, EthereumRelayHeaderParcel, RelayVotingState]>>>> & QueryableStorageEntry<ApiType>;
       receiptVerifyFee: AugmentedQuery<ApiType, () => Observable<RingBalance>> & QueryableStorageEntry<ApiType>;
     };
     ethereumRelayerGame: {
@@ -230,12 +317,18 @@ declare module '@polkadot/api/types/storage' {
        * The first key is game id, the second key is round index
        * then you will get the affirmations under that round in that game
        **/
-      affirmations: AugmentedQueryDoubleMap<ApiType, (key1: RelayHeaderId | string | Uint8Array, key2: u32 | AnyNumber | Uint8Array) => Observable<Vec<RelayAffirmationT>>> & QueryableStorageEntry<ApiType>;
+      affirmations: AugmentedQueryDoubleMap<ApiType, (key1: RelayHeaderId | AnyNumber | Uint8Array, key2: u32 | AnyNumber | Uint8Array) => Observable<Vec<RelayAffirmationT>>> & QueryableStorageEntry<ApiType>;
+      /**
+       * All the closed games here
+       * 
+       * Game close at this moment, closed games won't accept any affirmation
+       **/
+      affirmTime: AugmentedQuery<ApiType, (arg: RelayHeaderId | AnyNumber | Uint8Array) => Observable<Option<ITuple<[BlockNumber, u32]>>>> & QueryableStorageEntry<ApiType>;
       /**
        * The best confirmed header id record of a game when it start
        **/
-      bestConfirmedHeaderId: AugmentedQuery<ApiType, (arg: RelayHeaderId | string | Uint8Array) => Observable<RelayHeaderId>> & QueryableStorageEntry<ApiType>;
-      gameSamplePoints: AugmentedQuery<ApiType, (arg: RelayHeaderId | string | Uint8Array) => Observable<Vec<Vec<RelayHeaderId>>>> & QueryableStorageEntry<ApiType>;
+      bestConfirmedHeaderId: AugmentedQuery<ApiType, (arg: RelayHeaderId | AnyNumber | Uint8Array) => Observable<RelayHeaderId>> & QueryableStorageEntry<ApiType>;
+      gameSamplePoints: AugmentedQuery<ApiType, (arg: RelayHeaderId | AnyNumber | Uint8Array) => Observable<Vec<Vec<RelayHeaderId>>>> & QueryableStorageEntry<ApiType>;
       /**
        * All the closed rounds here
        * 
@@ -243,13 +336,6 @@ declare module '@polkadot/api/types/storage' {
        * Settle or update a game will be scheduled which will start at this moment
        **/
       gamesToUpdate: AugmentedQuery<ApiType, (arg: BlockNumber | AnyNumber | Uint8Array) => Observable<Vec<RelayHeaderId>>> & QueryableStorageEntry<ApiType>;
-      pendingRelayHeaderParcels: AugmentedQuery<ApiType, () => Observable<Vec<ITuple<[BlockNumber, RelayHeaderId, RelayHeaderParcel]>>>> & QueryableStorageEntry<ApiType>;
-      /**
-       * All the closed games here
-       * 
-       * Game close at this moment, closed games won't accept any affirmation
-       **/
-      proposeEndTime: AugmentedQuery<ApiType, (arg: RelayHeaderId | string | Uint8Array) => Observable<BlockNumber>> & QueryableStorageEntry<ApiType>;
       /**
        * Active games' relay header parcel's ids
        **/
@@ -259,7 +345,7 @@ declare module '@polkadot/api/types/storage' {
        * 
        * `total rounds - 1 = last round index`
        **/
-      roundCounts: AugmentedQuery<ApiType, (arg: RelayHeaderId | string | Uint8Array) => Observable<u32>> & QueryableStorageEntry<ApiType>;
+      roundCounts: AugmentedQuery<ApiType, (arg: RelayHeaderId | AnyNumber | Uint8Array) => Observable<u32>> & QueryableStorageEntry<ApiType>;
       /**
        * All the stakes here
        **/
@@ -381,6 +467,13 @@ declare module '@polkadot/api/types/storage' {
        * `offchain::OpaqueNetworkState`.
        **/
       receivedHeartbeats: AugmentedQueryDoubleMap<ApiType, (key1: SessionIndex | AnyNumber | Uint8Array, key2: AuthIndex | AnyNumber | Uint8Array) => Observable<Option<Bytes>>> & QueryableStorageEntry<ApiType>;
+    };
+    indices: {
+      [key: string]: QueryableStorageEntry<ApiType>;
+      /**
+       * The lookup from index to account.
+       **/
+      accounts: AugmentedQuery<ApiType, (arg: AccountIndex | AnyNumber | Uint8Array) => Observable<Option<ITuple<[AccountId, BalanceOf, bool]>>>> & QueryableStorageEntry<ApiType>;
     };
     kton: {
       [key: string]: QueryableStorageEntry<ApiType>;
@@ -980,16 +1073,6 @@ declare module '@polkadot/api/types/storage' {
        * guaranteed to be a secure hash.
        **/
       tips: AugmentedQuery<ApiType, (arg: Hash | string | Uint8Array) => Observable<Option<OpenTip>>> & QueryableStorageEntry<ApiType>;
-    };
-    tronBacking: {
-      [key: string]: QueryableStorageEntry<ApiType>;
-    };
-    vesting: {
-      [key: string]: QueryableStorageEntry<ApiType>;
-      /**
-       * Information regarding the vesting of a given account.
-       **/
-      vesting: AugmentedQuery<ApiType, (arg: AccountId | string | Uint8Array) => Observable<Option<VestingInfo>>> & QueryableStorageEntry<ApiType>;
     };
   }
 

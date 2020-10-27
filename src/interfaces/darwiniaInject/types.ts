@@ -3,7 +3,7 @@
 
 import { ITuple } from '@polkadot/types/types';
 import { Compact, Enum, Option, Struct, U8aFixed, Vec } from '@polkadot/types/codec';
-import { Bytes, Text, U256, bool, u128, u32, u64, u8 } from '@polkadot/types/primitive';
+import { Bytes, Text, U256, u128, u32, u64, u8 } from '@polkadot/types/primitive';
 import { AccountId, Balance, BlockNumber, H160, H256, H512, Hash, Index, LockIdentifier } from '@polkadot/types/interfaces/runtime';
 import { RefCount } from '@polkadot/types/interfaces/system';
 import { ElectionCompute, EraIndex }  from '@polkadot/types/interfaces/staking';
@@ -228,31 +228,6 @@ export interface RedeemFor extends Enum {
   readonly isToken: boolean;
   readonly isDeposit: boolean;
 }
-
-/** @name RelayAffirmationId */
-export interface RelayAffirmationId extends Struct {
-  readonly relayHeaderId: Bytes;
-  readonly round: u32;
-  readonly index: u32;
-}
-
-/** @name RelayAffirmationT */
-export interface RelayAffirmationT extends Struct {
-  readonly relayer: AccountId;
-  readonly relayHeaderParcels: Bytes;
-  readonly bond: Balance;
-  readonly maybeExtendedRelayAffirmationId: Option<Bytes>;
-  readonly verified: bool;
-}
-
-/** @name RelayHeaderId */
-export interface RelayHeaderId extends u64 {}
-
-/** @name RelayHeaderParcel */
-export interface RelayHeaderParcel extends EthereumRelayHeaderParcel {}
-
-/** @name RelayProofs */
-export interface RelayProofs extends Bytes {}
 
 /** @name RingBalance */
 export interface RingBalance extends Balance {}

@@ -201,22 +201,6 @@ export default {
       prefix: '[u8; 4; Prefix]',
       mmrRoot: 'Hash'
     },
-
-    RelayHeaderId: "u64",
-    RelayHeaderParcel: "EthereumRelayHeaderParcel",
-    RelayProofs: "Vec<u8>",
-    RelayAffirmationId: {
-      relayHeaderId: "Vec<u8>",
-      round: "u32",
-      index: "u32"
-    },
-    RelayAffirmationT: {
-      relayer: "AccountId",
-      relayHeaderParcels: "Vec<u8>",
-      bond: "Balance",
-      maybeExtendedRelayAffirmationId: "Option<Vec<u8>>",
-      verified: "bool"
-    },
   
     ChainProperties: {
       ss58Format: 'Option<u8>',
