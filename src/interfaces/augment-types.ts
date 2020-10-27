@@ -1601,6 +1601,7 @@ declare module '@polkadot/types/types/registry' {
     'Option<MerkleMountainRangeRootLog>': Option<MerkleMountainRangeRootLog>;
     'Vec<MerkleMountainRangeRootLog>': Vec<MerkleMountainRangeRootLog>;
     RelayHeaderId: RelayHeaderId;
+    'Compact<RelayHeaderId>': Compact<RelayHeaderId>;
     'Option<RelayHeaderId>': Option<RelayHeaderId>;
     'Vec<RelayHeaderId>': Vec<RelayHeaderId>;
     RelayHeaderParcel: RelayHeaderParcel;

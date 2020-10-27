@@ -171,11 +171,11 @@ export default {
       lastLeafIndex: "u64",
       proof: "Vec<H256>"
     },
-    "EthereumRelayHeaderParcel": {
+    EthereumRelayHeaderParcel: {
       "header": "EthereumHeader",
       "mmrRoot": "H256"
     },
-    "EthereumRelayProofs": {
+    EthereumRelayProofs: {
       "ethashProof": "Vec<EthashProof>",
       "mmrProof": "Vec<H256>"
     },
@@ -202,8 +202,8 @@ export default {
       mmrRoot: 'Hash'
     },
 
-    RelayHeaderId: "Vec<u8>",
-    RelayHeaderParcel: "Vec<u8>",
+    RelayHeaderId: "u64",
+    RelayHeaderParcel: "EthereumRelayHeaderParcel",
     RelayProofs: "Vec<u8>",
     RelayAffirmationId: {
       relayHeaderId: "Vec<u8>",

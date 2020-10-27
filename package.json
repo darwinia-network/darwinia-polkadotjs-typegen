@@ -1,6 +1,6 @@
 {
   "name": "@darwinia/typegen",
-  "version": "0.0.20",
+  "version": "0.0.22",
   "description": "A sample using @polkadot/typegen to generate type definitions",
   "repository": "https://github.com/WoeOm/darwinia-polkadotjs-typegen",
   "author": "WoeOm",

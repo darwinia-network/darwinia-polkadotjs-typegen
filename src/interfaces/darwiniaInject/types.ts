@@ -246,10 +246,10 @@ export interface RelayAffirmationT extends Struct {
 }
 
 /** @name RelayHeaderId */
-export interface RelayHeaderId extends Bytes {}
+export interface RelayHeaderId extends u64 {}
 
 /** @name RelayHeaderParcel */
-export interface RelayHeaderParcel extends Bytes {}
+export interface RelayHeaderParcel extends EthereumRelayHeaderParcel {}
 
 /** @name RelayProofs */
 export interface RelayProofs extends Bytes {}

@@ -16,6 +16,7 @@ export default {
       _enum: {
         "Any": null,
         "NonTransfer": null,
+        "Governance": null,
         "Staking": null,
         "IdentityJudgement": null,
         "EthereumBridge": null
